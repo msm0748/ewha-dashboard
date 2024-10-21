@@ -17,17 +17,16 @@ type FieldType = {
 
 interface Props {
   open: boolean;
-  onOk: () => void;
   onCancel: () => void;
   addUser: (user: UserDataType) => void;
 }
 
-export default function AddUserModal({ open, onOk, onCancel, addUser }: Props) {
+export default function AddUserModal({ open, onCancel, addUser }: Props) {
   const [form] = Form.useForm();
   const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
     // console.log(, 'values');
     addUser({
-      key: Math.random(),
+      key: Math.random().toString(),
       code: values.code,
       birth: dayjs(values.birth).format('YYYY-MM-DD'),
       gender: values.gender,

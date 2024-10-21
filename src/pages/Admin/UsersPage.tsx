@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Button, Table } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Modal, Table } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
 import AddUserModal from '../../components/AddUserModal';
 
@@ -121,41 +121,48 @@ const data: UserDataType[] = [
   },
 ];
 
-// rowSelection object indicates the need for row selection
-const rowSelection: TableProps<UserDataType>['rowSelection'] = {
-  onChange: (selectedRowKeys: React.Key[], selectedRows: UserDataType[]) => {
-    console.log(
-      `selectedRowKeys: ${selectedRowKeys}`,
-      'selectedRows: ',
-      selectedRows
-    );
-  },
-};
-
 export default function UsersPage() {
-  const [openAddUserModal, setOpenAddUserModal] = useState(false);
-  const [openDeleteUserModal, setOpenDeleteUserModal] = useState(false);
-  const closeAddUserModal = () => setOpenAddUserModal(false);
+  const [isAddUserModal, setIsAddUserModal] = useState(false);
+  const [isRemoveUserModal, setIsRemoveUserModal] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState<React.Key[]>([]);
+
+  const openAddUserModal = () => setIsAddUserModal(true);
+  const closeAddUserModal = () => setIsAddUserModal(false);
+
+  const openRemoveUserModal = () => setIsRemoveUserModal(true);
+  const closeRemoveUserModal = () => setIsRemoveUserModal(false);
 
   const [users, setUsers] = useState<UserDataType[]>(data);
 
   const addUser = (user: UserDataType) => {
     setUsers([...users, user]);
   };
+
+  // 선택된 유저 삭제하는 함수
+  const removeSelectedUsers = () => {
+    setUsers(users.filter((user) => !selectedUsers.includes(user.key)));
+    setSelectedUsers([]); // 삭제 후 선택 초기화
+    closeRemoveUserModal();
+  };
+
+  // rowSelection object indicates the need for row selection
+  const rowSelection: TableProps<UserDataType>['rowSelection'] = {
+    onChange: (selectedRowKeys: React.Key[]) => {
+      setSelectedUsers(selectedRowKeys);
+    },
+  };
+
   return (
     <div>
       <div className="flex my-4 justify-end gap-4">
-        <Button
-          color="primary"
-          variant="outlined"
-          onClick={() => setOpenAddUserModal(true)}
-        >
+        <Button color="primary" variant="outlined" onClick={openAddUserModal}>
           회원 등록
         </Button>
         <Button
           color="danger"
           variant="outlined"
-          onClick={() => setOpenDeleteUserModal(true)}
+          onClick={openRemoveUserModal}
+          disabled={selectedUsers.length === 0}
         >
           회원 삭제
         </Button>
@@ -170,11 +177,19 @@ export default function UsersPage() {
       />
 
       <AddUserModal
-        open={openAddUserModal}
-        onOk={closeAddUserModal}
+        open={isAddUserModal}
         onCancel={closeAddUserModal}
         addUser={addUser}
       />
+      <Modal
+        title="유저 삭제"
+        centered
+        open={isRemoveUserModal}
+        onOk={removeSelectedUsers}
+        onCancel={closeRemoveUserModal}
+      >
+        <p>유저를 삭제하시겠습니가?</p>
+      </Modal>
     </div>
   );
 }
