@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Divider, Radio, Table } from 'antd';
+import { Button, Table } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
+import AddUserModal from '../../components/AddUserModal';
 
-interface DataType {
+export interface UserDataType {
   key: React.Key;
   code: string;
   birth: string;
@@ -13,17 +14,17 @@ interface DataType {
   step1: string;
   step2: string;
   step3: string;
-  step4: string;
-  step5: string;
-  step6: string;
-  step7: string;
+  etc: string;
+  note: string;
+  start: string;
+  end: string;
 }
 
-const columns: TableColumnsType<DataType> = [
+const columns: TableColumnsType<UserDataType> = [
   {
     title: '코드',
     dataIndex: 'code',
-    render: (text: string) => <a className="text-sky-400">{text}</a>,
+    render: (text: string) => <a className="text-blue-500">{text}</a>,
     fixed: 'left',
     width: 120,
   },
@@ -68,24 +69,24 @@ const columns: TableColumnsType<DataType> = [
     dataIndex: 'step3',
   },
   {
-    title: '알레르기력',
-    dataIndex: 'step4',
+    title: '기타',
+    dataIndex: 'etc',
   },
   {
-    title: '기타',
-    dataIndex: 'step5',
+    title: '비고',
+    dataIndex: 'note',
   },
   {
-    title: '기타',
-    dataIndex: 'step6',
+    title: 'Start',
+    dataIndex: 'start',
   },
   {
-    title: '기타',
-    dataIndex: 'step7',
+    title: 'End',
+    dataIndex: 'end',
   },
 ];
 
-const data: DataType[] = [
+const data: UserDataType[] = [
   {
     key: '1',
     code: 'P-01-2024',
@@ -97,10 +98,10 @@ const data: DataType[] = [
     step1: '완료',
     step2: '완료',
     step3: '완료',
-    step4: '완료',
-    step5: '완료',
-    step6: '완료',
-    step7: '완료',
+    etc: '',
+    note: '',
+    start: '2021-10-01',
+    end: '2021-10-31',
   },
   {
     key: '2',
@@ -113,48 +114,16 @@ const data: DataType[] = [
     step1: '완료',
     step2: '완료',
     step3: '완료',
-    step4: '완료',
-    step5: '완료',
-    step6: '완료',
-    step7: '완료',
-  },
-  {
-    key: '3',
-    code: 'P-01-2024',
-    birth: '1989-02-27',
-    gender: 'F',
-    machinery: 'EF1100',
-    consent: '동의함',
-    survey: '완료',
-    step1: '완료',
-    step2: '완료',
-    step3: '완료',
-    step4: '완료',
-    step5: '완료',
-    step6: '완료',
-    step7: '완료',
-  },
-  {
-    key: '4',
-    code: 'P-01-2024',
-    birth: '1989-02-27',
-    gender: 'F',
-    machinery: 'EF1100',
-    consent: '동의함',
-    survey: '완료',
-    step1: '완료',
-    step2: '완료',
-    step3: '완료',
-    step4: '완료',
-    step5: '완료',
-    step6: '완료',
-    step7: '완료',
+    etc: '',
+    note: '',
+    start: '2021-10-01',
+    end: '2021-10-31',
   },
 ];
 
 // rowSelection object indicates the need for row selection
-const rowSelection: TableProps<DataType>['rowSelection'] = {
-  onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
+const rowSelection: TableProps<UserDataType>['rowSelection'] = {
+  onChange: (selectedRowKeys: React.Key[], selectedRows: UserDataType[]) => {
     console.log(
       `selectedRowKeys: ${selectedRowKeys}`,
       'selectedRows: ',
@@ -164,15 +133,47 @@ const rowSelection: TableProps<DataType>['rowSelection'] = {
 };
 
 export default function UsersPage() {
+  const [openAddUserModal, setOpenAddUserModal] = useState(false);
+  const [openDeleteUserModal, setOpenDeleteUserModal] = useState(false);
+  const closeAddUserModal = () => setOpenAddUserModal(false);
+
+  const [users, setUsers] = useState<UserDataType[]>(data);
+
+  const addUser = (user: UserDataType) => {
+    setUsers([...users, user]);
+  };
   return (
     <div>
-      <Table<DataType>
+      <div className="flex my-4 justify-end gap-4">
+        <Button
+          color="primary"
+          variant="outlined"
+          onClick={() => setOpenAddUserModal(true)}
+        >
+          회원 등록
+        </Button>
+        <Button
+          color="danger"
+          variant="outlined"
+          onClick={() => setOpenDeleteUserModal(true)}
+        >
+          회원 삭제
+        </Button>
+      </div>
+      <Table<UserDataType>
         rowSelection={{ type: 'checkbox', ...rowSelection, columnWidth: 40 }}
         virtual
         scroll={{ x: 2000, y: 400 }}
         columns={columns}
-        dataSource={data}
+        dataSource={users}
         pagination={false}
+      />
+
+      <AddUserModal
+        open={openAddUserModal}
+        onOk={closeAddUserModal}
+        onCancel={closeAddUserModal}
+        addUser={addUser}
       />
     </div>
   );

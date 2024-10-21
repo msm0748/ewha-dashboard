@@ -7,7 +7,7 @@ import {
 import { Layout, Menu, theme } from 'antd';
 import { Outlet, useNavigate } from 'react-router-dom';
 
-const { Header, Sider, Content } = Layout;
+const { Sider, Content } = Layout;
 
 const menuList = [
   { icon: <UserOutlined />, label: '회원 관리', path: '/admin' },
