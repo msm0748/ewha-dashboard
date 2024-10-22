@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Button, Modal, Table } from 'antd';
 import { Input, TableColumnsType, TableProps } from 'antd';
 import AddUserModal from '../../components/AddUserModal';
 import { UserDataType } from '../../types/User';
+import { useUsers } from '../../hooks/useUsers';
 const { Search } = Input;
 
 const columns: TableColumnsType<UserDataType> = [
@@ -107,40 +108,25 @@ const data: UserDataType[] = [
 ];
 
 export default function UsersPage() {
-  const [users, setUsers] = useState<UserDataType[]>(data);
-  const [searchKeyword, setSearchKeyword] = useState<string>('');
+  const {
+    users,
+    totalUsers,
+    filteredCount,
+    selectedUsers,
+    searchKeyword,
+    setSelectedUsers,
+    addUser,
+    removeSelectedUsers,
+    handleSearch,
+  } = useUsers(data);
+
   const [isAddUserModal, setIsAddUserModal] = useState(false);
   const [isRemoveUserModal, setIsRemoveUserModal] = useState(false);
-  const [selectedUsers, setSelectedUsers] = useState<React.Key[]>([]);
-
-  // 검색된 사용자 목록을 메모이제이션
-  const filteredUsers = useMemo(() => {
-    if (!searchKeyword.trim()) return users;
-
-    return users.filter((user) =>
-      user.code.toLowerCase().includes(searchKeyword.toLowerCase().trim())
-    );
-  }, [users, searchKeyword]);
-
-  const addUser = (user: UserDataType) => {
-    setUsers([...users, user]);
-  };
-
-  const removeSelectedUsers = () => {
-    setUsers(users.filter((user) => !selectedUsers.includes(user.key)));
-    setSelectedUsers([]); // 삭제 후 선택 초기화
-    setIsRemoveUserModal(false);
-  };
 
   const rowSelection: TableProps<UserDataType>['rowSelection'] = {
     onChange: (selectedRowKeys: React.Key[]) => {
       setSelectedUsers(selectedRowKeys);
     },
-    selectedRowKeys: selectedUsers,
-  };
-
-  const handleSearch = (value: string) => {
-    setSearchKeyword(value);
   };
 
   return (
@@ -157,7 +143,7 @@ export default function UsersPage() {
           />
           {searchKeyword && (
             <div className="mt-2 text-sm text-gray-600">
-              검색결과: {filteredUsers.length}건 / 전체: {users.length}건
+              검색결과: {filteredCount}건 / 전체: {totalUsers}건
             </div>
           )}
         </div>
@@ -180,7 +166,7 @@ export default function UsersPage() {
         virtual
         scroll={{ x: 2000, y: 400 }}
         columns={columns}
-        dataSource={filteredUsers}
+        dataSource={users}
         pagination={false}
       />
 
@@ -194,7 +180,12 @@ export default function UsersPage() {
         title="유저 삭제"
         centered
         open={isRemoveUserModal}
-        onOk={removeSelectedUsers}
+        okText="삭제"
+        cancelText="취소"
+        onOk={() => {
+          removeSelectedUsers();
+          setIsRemoveUserModal(false);
+        }}
         onCancel={() => setIsRemoveUserModal(false)}
       >
         <p>유저를 삭제하시겠습니까?</p>
