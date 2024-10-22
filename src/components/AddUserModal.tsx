@@ -1,7 +1,7 @@
-import type { DatePickerProps, FormProps } from 'antd';
+import type { FormProps } from 'antd';
 import { Button, DatePicker, Form, Input, Modal, Select } from 'antd';
 import dayjs from 'dayjs';
-import { UserDataType } from '../pages/Admin/UsersPage';
+import { UserDataType } from '../types/User';
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -24,7 +24,6 @@ interface Props {
 export default function AddUserModal({ open, onCancel, addUser }: Props) {
   const [form] = Form.useForm();
   const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
-    // console.log(, 'values');
     addUser({
       key: Math.random().toString(),
       code: values.code,
