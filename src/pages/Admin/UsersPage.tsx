@@ -4,6 +4,7 @@ import { Input, TableColumnsType, TableProps } from 'antd';
 import AddUserModal from '../../components/AddUserModal';
 import { UserDataType } from '../../types/User';
 import { useUsers } from '../../hooks/useUsers';
+import { userDummyData } from '../../data/userDummyData';
 const { Search } = Input;
 
 const columns: TableColumnsType<UserDataType> = [
@@ -28,19 +29,43 @@ const columns: TableColumnsType<UserDataType> = [
   },
   {
     title: '기기',
-    dataIndex: 'machinery',
+    dataIndex: 'device',
     fixed: 'left',
     width: 100,
   },
   {
     title: '동의서',
-    dataIndex: 'consent',
+    dataIndex: 'consentForm',
     fixed: 'left',
+    filters: [
+      {
+        text: '제출',
+        value: '제출',
+      },
+      {
+        text: '미제출',
+        value: '미제출',
+      },
+    ],
     width: 100,
+    onFilter: (value, record) =>
+      record.consentForm.indexOf(value as string) === 0,
   },
   {
     title: '설문',
     dataIndex: 'survey',
+    filters: [
+      {
+        text: '제출',
+        value: '제출',
+      },
+      {
+        text: '미제출',
+        value: '미제출',
+      },
+    ],
+    onFilter: (value, record) => record.survey.indexOf(value as string) === 0,
+    width: 100,
   },
   {
     title: '생체신호',
@@ -72,53 +97,17 @@ const columns: TableColumnsType<UserDataType> = [
   },
 ];
 
-const data: UserDataType[] = [
-  {
-    key: '1',
-    code: 'P-01-2024',
-    birth: '1989-02-27',
-    gender: 'F',
-    machinery: 'EF1100',
-    consent: '동의함',
-    survey: '완료',
-    step1: '완료',
-    step2: '완료',
-    step3: '완료',
-    etc: '',
-    note: '',
-    start: '2021-10-01',
-    end: '2021-10-31',
-  },
-  {
-    key: '2',
-    code: 'P-01-2023',
-    birth: '1989-02-27',
-    gender: 'F',
-    machinery: 'EF1100',
-    consent: '동의함',
-    survey: '완료',
-    step1: '완료',
-    step2: '완료',
-    step3: '완료',
-    etc: '',
-    note: '',
-    start: '2021-10-01',
-    end: '2021-10-31',
-  },
-];
-
 export default function UsersPage() {
   const {
     users,
-    totalUsers,
-    filteredCount,
     selectedUsers,
     searchKeyword,
     setSelectedUsers,
     addUser,
     removeSelectedUsers,
     handleSearch,
-  } = useUsers(data);
+    setUsers,
+  } = useUsers(userDummyData);
 
   const [isAddUserModal, setIsAddUserModal] = useState(false);
   const [isRemoveUserModal, setIsRemoveUserModal] = useState(false);
@@ -141,11 +130,6 @@ export default function UsersPage() {
             enterButton
             allowClear
           />
-          {searchKeyword && (
-            <div className="mt-2 text-sm text-gray-600">
-              검색결과: {filteredCount}건 / 전체: {totalUsers}건
-            </div>
-          )}
         </div>
         <div className="flex gap-4">
           <Button type="primary" onClick={() => setIsAddUserModal(true)}>
