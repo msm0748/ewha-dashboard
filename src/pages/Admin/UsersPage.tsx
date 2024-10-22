@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Button, Modal, Table } from 'antd';
+import { Button, Table } from 'antd';
 import { Input, TableColumnsType, TableProps } from 'antd';
 import AddUserModal from '../../components/AddUserModal';
 import { UserDataType } from '../../types/User';
 import { useUsers } from '../../hooks/useUsers';
 import { userDummyData } from '../../data/userDummyData';
+import DeleteUserModal from '../../components/DeleteUserModal';
 const { Search } = Input;
 
 const columns: TableColumnsType<UserDataType> = [
@@ -104,13 +105,12 @@ export default function UsersPage() {
     searchKeyword,
     setSelectedUsers,
     addUser,
-    removeSelectedUsers,
+    deleteSelectedUsers,
     handleSearch,
-    setUsers,
   } = useUsers(userDummyData);
 
   const [isAddUserModal, setIsAddUserModal] = useState(false);
-  const [isRemoveUserModal, setIsRemoveUserModal] = useState(false);
+  const [isDeleteUserModal, setIsDeleteUserModal] = useState(false);
 
   const rowSelection: TableProps<UserDataType>['rowSelection'] = {
     onChange: (selectedRowKeys: React.Key[]) => {
@@ -137,7 +137,7 @@ export default function UsersPage() {
           </Button>
           <Button
             danger
-            onClick={() => setIsRemoveUserModal(true)}
+            onClick={() => setIsDeleteUserModal(true)}
             disabled={selectedUsers.length === 0}
           >
             회원 삭제
@@ -160,20 +160,11 @@ export default function UsersPage() {
         addUser={addUser}
       />
 
-      <Modal
-        title="유저 삭제"
-        centered
-        open={isRemoveUserModal}
-        okText="삭제"
-        cancelText="취소"
-        onOk={() => {
-          removeSelectedUsers();
-          setIsRemoveUserModal(false);
-        }}
-        onCancel={() => setIsRemoveUserModal(false)}
-      >
-        <p>유저를 삭제하시겠습니까?</p>
-      </Modal>
+      <DeleteUserModal
+        open={isDeleteUserModal}
+        onCancel={() => setIsDeleteUserModal(false)}
+        onOk={deleteSelectedUsers}
+      />
     </div>
   );
 }

@@ -21,7 +21,7 @@ export const useUsers = (initialData: UserDataType[]) => {
   };
 
   /** 선택된 사용자 삭제 함수 */
-  const removeSelectedUsers = () => {
+  const deleteSelectedUsers = () => {
     setUsers(users.filter((user) => !selectedUsers.includes(user.key)));
     setSelectedUsers([]); // 삭제 후 선택 초기화
   };
@@ -33,12 +33,11 @@ export const useUsers = (initialData: UserDataType[]) => {
 
   return {
     users: filteredUsers,
-    setUsers,
     selectedUsers,
     setSelectedUsers,
     addUser,
     searchKeyword,
-    removeSelectedUsers,
+    deleteSelectedUsers,
     handleSearch,
   };
 };
