@@ -1,13 +1,13 @@
 import type { FormProps } from 'antd';
 import { Button, DatePicker, Form, Input, Modal, Select } from 'antd';
 import dayjs from 'dayjs';
-import { UserDataType } from '../types/User';
+import { UserDataType } from '../../types/User';
 const { TextArea } = Input;
 const { Option } = Select;
 
 type FieldType = {
   code: string;
-  machinery: string;
+  device: string;
   birth: string;
   gender: 'M' | 'F';
   note?: string;
@@ -29,9 +29,9 @@ export default function AddUserModal({ open, onCancel, addUser }: Props) {
       code: values.code,
       birth: dayjs(values.birth).format('YYYY-MM-DD'),
       gender: values.gender,
-      machinery: values.machinery,
-      consent: '',
-      survey: '',
+      device: values.device,
+      consentForm: '미제출',
+      survey: '미제출',
       step1: '',
       step2: '',
       step3: '',
@@ -93,7 +93,7 @@ export default function AddUserModal({ open, onCancel, addUser }: Props) {
 
           <Form.Item<FieldType>
             label="기기"
-            name="machinery"
+            name="device"
             rules={[{ required: true, message: 'Please input your username!' }]}
           >
             <Input />

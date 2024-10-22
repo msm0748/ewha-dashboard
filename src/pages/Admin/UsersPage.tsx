@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Button, Table } from 'antd';
 import { Input, TableColumnsType, TableProps } from 'antd';
-import AddUserModal from '../../components/AddUserModal';
+import AddUserModal from '../../components/modal/AddUserModal';
 import { UserDataType } from '../../types/User';
 import { useUsers } from '../../hooks/useUsers';
 import { userDummyData } from '../../data/userDummyData';
-import DeleteUserModal from '../../components/DeleteUserModal';
+import DeleteUserModal from '../../components/modal/DeleteUserModal';
 const { Search } = Input;
 
 const columns: TableColumnsType<UserDataType> = [
