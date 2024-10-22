@@ -156,7 +156,7 @@ export default function UsersPage() {
 
       <AddUserModal
         open={isAddUserModal}
-        onCancel={() => setIsAddUserModal(false)}
+        closeModal={() => setIsAddUserModal(false)}
         addUser={addUser}
       />
 
