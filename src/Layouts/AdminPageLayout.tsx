@@ -5,7 +5,8 @@ import {
   LogoutOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, theme } from 'antd';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 const { Sider, Content } = Layout;
 
@@ -20,8 +21,16 @@ export default function AdminPageLayout() {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+  const location = useLocation();
+
+  const [selectedKey, setSelectedKey] = useState(location.pathname);
 
   const navigate = useNavigate();
+
+  const handleMenuClick = (path: string) => {
+    setSelectedKey(path);
+    navigate(path);
+  };
 
   return (
     <div className="h-dvh flex">
@@ -33,13 +42,13 @@ export default function AdminPageLayout() {
           <Menu
             theme="dark"
             mode="inline"
-            defaultSelectedKeys={['1']}
-            items={menuList.map((menu, index) => {
+            selectedKeys={[selectedKey]}
+            items={menuList.map((menu) => {
               return {
-                key: index.toString(),
+                key: menu.path,
                 icon: menu.icon,
                 label: menu.label,
-                onClick: () => navigate(menu.path),
+                onClick: () => handleMenuClick(menu.path),
               };
             })}
           />
