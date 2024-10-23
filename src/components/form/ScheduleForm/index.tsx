@@ -11,6 +11,7 @@ import {
 import Row from './Row';
 import { useState } from 'react';
 import dayjs from 'dayjs';
+import { EventInput } from '@fullcalendar/core/index.js';
 
 type FieldType = {
   title: string;
@@ -21,13 +22,18 @@ type FieldType = {
   allDay: boolean;
 };
 
+interface Props {
+  closeModal: () => void;
+  addEvent: (event: EventInput) => void;
+}
+
 const format = 'HH:mm';
 
-export default function ScheduleForm() {
-  const [allDay, setAllDay] = useState(false);
+export default function ScheduleForm({ closeModal, addEvent }: Props) {
+  const [allDay, setAllDay] = useState(true);
   const [form] = Form.useForm();
 
-  // 주어진 시간을 가장 가까운 10분 단위로 변환하는 함수
+  /** 주어진 시간을 가장 가까운 10분 단위로 변환하는 함수 */
   const roundToNearestTenMinutes = (time: dayjs.Dayjs) => {
     const minute = time.minute(); // 주어진 시간의 분 가져오기
     const roundedMinute = Math.ceil(minute / 10) * 10; // 10분 단위로 올림
@@ -41,6 +47,16 @@ export default function ScheduleForm() {
 
   const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
     console.log('Success:', values);
+    addEvent({
+      title: values.title,
+      start: dayjs(values.startDate).format('YYYY-MM-DD'),
+      end: allDay
+        ? dayjs(values.endDate).endOf('day').toDate()
+        : dayjs(values.startDate).format('YYYY-MM-DD'),
+      allDay,
+    });
+    closeModal();
+    form.resetFields();
   };
   return (
     <Form
@@ -117,7 +133,7 @@ export default function ScheduleForm() {
         >
           <div className="flex items-center gap-2">
             <span>종일</span>
-            <Switch onChange={onChangeAllDay} />
+            <Switch onChange={onChangeAllDay} defaultChecked />
           </div>
         </Form.Item>
       </Row>

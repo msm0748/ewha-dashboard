@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Calendar from '../../components/Calendar';
 import AddScheduleModal from '../../components/modal/AddScheduleModal';
 import { EventInput } from '@fullcalendar/core/index.js';
@@ -16,12 +16,17 @@ export default function CalendarPage() {
     setEvents([...events, event]);
   };
 
+  useEffect(() => {
+    console.log(events);
+  }, [events]);
+
   return (
     <div className="h-full">
       <Calendar events={events} openAddScheduleModal={openAddScheduleModal} />
       <AddScheduleModal
         open={isAddScheduleModal}
         closeModal={() => setIsAddScheduleModal(false)}
+        addEvent={addEvent}
       />
     </div>
   );
