@@ -62,6 +62,10 @@ export default function Calendar({
     });
   };
 
+  useEffect(() => {
+    console.log('events', events);
+  }, [events]);
+
   return (
     <FullCalendar
       plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
@@ -70,10 +74,11 @@ export default function Calendar({
         center: 'title',
         end: 'dayGridMonth timeGridWeek timeGridDay',
       }}
+      timeZone="local"
       initialView="dayGridMonth"
       height="100%"
       locale="ko"
-      events={adjustEventEndDate(events)}
+      events={events}
       eventContent={renderEventContent}
       editable={true}
       droppable={true}
@@ -81,12 +86,12 @@ export default function Calendar({
       eventResize={handleEventResize}
       selectable={true}
       select={(arg) => {
-        const adjustedEndDate = dayjs(arg.endStr)
-          .subtract(1, 'day')
-          .format('YYYY-MM-DD'); // 하루 빼기
+        // const adjustedEndDate = dayjs(arg.endStr)
+        //   .subtract(1, 'day')
+        //   .format('YYYY-MM-DD'); // 하루 빼기
         selectDate({
           startDate: arg.startStr,
-          endDate: adjustedEndDate,
+          endDate: arg.endStr,
         });
         openAddScheduleModal();
       }}

@@ -1,10 +1,14 @@
 import { EventInput } from '@fullcalendar/core/index.js';
 
+/**
+ * data type
+ * https://fullcalendar.io/docs/event-object
+ */
 export const eventDumyData: EventInput[] = [
   {
     title: '회의',
-    start: '2024-10-22', // 시작 시간 추가
-    end: '2024-10-25', // 종료 시간 추가
-    allDay: true,
+    start: '2024-10-23T10:30:00',
+    end: '2024-10-23T14:30:00',
+    allDay: false,
   },
 ];

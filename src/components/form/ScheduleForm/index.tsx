@@ -55,10 +55,19 @@ export default function ScheduleForm({
 
   const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
     console.log('Success:', values);
+    console.log('time', dayjs(values.startTime).format('HH:mm'));
     addEvent({
       title: values.title,
-      start: dayjs(values.startDate).format('YYYY-MM-DD'),
-      end: dayjs(values.endDate).format('YYYY-MM-DD'),
+      start: allDay
+        ? dayjs(values.startDate).format('YYYY-MM-DD')
+        : `${dayjs(values.startDate).format('YYYY-MM-DD')}T${dayjs(
+            values.startTime
+          ).format('HH:mm')}`,
+      end: allDay
+        ? dayjs(values.endDate).add(1, 'day').format('YYYY-MM-DD') // 캘린더 종료일이 하루 일찍 표시되는 문제 해결
+        : `${dayjs(values.endDate).format('YYYY-MM-DD')}T${dayjs(
+            values.endTime
+          ).format('HH:mm')}`,
       allDay,
     });
     closeModal();
@@ -86,7 +95,7 @@ export default function ScheduleForm({
       initialValues={{
         startDate: dayjs(selectedDate.startDate),
         startTime: roundToNearestTenMinutes(dayjs()),
-        endDate: dayjs(selectedDate.endDate),
+        endDate: dayjs(selectedDate.endDate).subtract(1, 'day'), // 캘린더 종료일이 하루 늦게 표시되는 문제 해결
         endTime: roundToNearestTenMinutes(dayjs().add(1, 'hour')), // 1시간 뒤
         allDay,
       }}
