@@ -6,32 +6,14 @@ import interactionPlugin, {
 } from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import '../styles/Calendar.css';
-import { EventContentArg, EventSourceInput } from '@fullcalendar/core/index.js';
+import { EventContentArg, EventInput } from '@fullcalendar/core/index.js';
 
 interface Props {
+  events: EventInput[];
   openAddScheduleModal: () => void;
 }
 
-export default function Calendar({ openAddScheduleModal }: Props) {
-  const events: EventSourceInput = [
-    {
-      title: '회의',
-      start: '2024-10-22T10:00:00', // 시작 시간 추가
-      end: '2024-10-22T11:00:00', // 종료 시간 추가
-    },
-    {
-      title: '프로젝트 마감일',
-      start: '2024-11-01',
-    },
-    {
-      id: 'a',
-      title: '휴가',
-      start: '2024-10-15',
-      color: 'transparent',
-      textColor: 'black',
-    },
-  ];
-
+export default function Calendar({ events, openAddScheduleModal }: Props) {
   const renderEventContent = (eventInfo: EventContentArg) => {
     return (
       <div className="flex items-center">

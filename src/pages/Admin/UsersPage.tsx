@@ -4,7 +4,7 @@ import { Input, TableColumnsType, TableProps } from 'antd';
 import AddUserModal from '../../components/modal/AddUserModal';
 import { UserDataType } from '../../types/User';
 import { useUsers } from '../../hooks/useUsers';
-import { userDummyData } from '../../data/userDummyData';
+import { userDummyData } from '../../data/dumy/userDummyData';
 import DeleteUserModal from '../../components/modal/DeleteUserModal';
 const { Search } = Input;
 
