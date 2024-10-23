@@ -7,13 +7,21 @@ import interactionPlugin, {
 import timeGridPlugin from '@fullcalendar/timegrid';
 import '../styles/Calendar.css';
 import { EventContentArg, EventInput } from '@fullcalendar/core/index.js';
+import { SelectedDate } from '../types/Calendar';
+import dayjs from 'dayjs';
+import { useEffect } from 'react';
 
 interface Props {
   events: EventInput[];
   openAddScheduleModal: () => void;
+  selectDate: (selectedDate: SelectedDate) => void;
 }
 
-export default function Calendar({ events, openAddScheduleModal }: Props) {
+export default function Calendar({
+  events,
+  openAddScheduleModal,
+  selectDate,
+}: Props) {
   const renderEventContent = (eventInfo: EventContentArg) => {
     return (
       <div className="flex items-center">
@@ -37,6 +45,23 @@ export default function Calendar({ events, openAddScheduleModal }: Props) {
     // Update the event on the server or in your state as needed
   };
 
+  /**
+   * FullCalendar에서 종료일이 하루 일찍 표시되는 문제를 해결하기 위해
+   * 이벤트의 종료일을 하루 뒤로 조정하는 함수
+   */
+  const adjustEventEndDate = (events: EventInput[]) => {
+    return events.map((event) => {
+      if (!event.end) return event;
+
+      return {
+        ...event,
+        end: dayjs(event.end as string)
+          .add(1, 'day')
+          .format('YYYY-MM-DD'),
+      };
+    });
+  };
+
   return (
     <FullCalendar
       plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
@@ -48,16 +73,22 @@ export default function Calendar({ events, openAddScheduleModal }: Props) {
       initialView="dayGridMonth"
       height="100%"
       locale="ko"
-      events={events}
+      events={adjustEventEndDate(events)}
       eventContent={renderEventContent}
       editable={true}
       droppable={true}
       eventDrop={handleEventDrop}
       eventResize={handleEventResize}
       selectable={true}
-      dateClick={(arg) => {
+      select={(arg) => {
+        const adjustedEndDate = dayjs(arg.endStr)
+          .subtract(1, 'day')
+          .format('YYYY-MM-DD'); // 하루 빼기
+        selectDate({
+          startDate: arg.startStr,
+          endDate: adjustedEndDate,
+        });
         openAddScheduleModal();
-        console.log(arg);
       }}
     />
   );

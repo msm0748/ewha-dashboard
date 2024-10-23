@@ -5,13 +5,15 @@ import {
   Form,
   FormProps,
   Input,
+  InputRef,
   Switch,
   TimePicker,
 } from 'antd';
 import Row from './Row';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import { EventInput } from '@fullcalendar/core/index.js';
+import { SelectedDate } from '../../../types/Calendar';
 
 type FieldType = {
   title: string;
@@ -25,13 +27,19 @@ type FieldType = {
 interface Props {
   closeModal: () => void;
   addEvent: (event: EventInput) => void;
+  selectedDate: SelectedDate;
 }
 
 const format = 'HH:mm';
 
-export default function ScheduleForm({ closeModal, addEvent }: Props) {
+export default function ScheduleForm({
+  closeModal,
+  addEvent,
+  selectedDate,
+}: Props) {
   const [allDay, setAllDay] = useState(true);
   const [form] = Form.useForm();
+  const titleInputRef = useRef<InputRef>(null);
 
   /** 주어진 시간을 가장 가까운 10분 단위로 변환하는 함수 */
   const roundToNearestTenMinutes = (time: dayjs.Dayjs) => {
@@ -50,14 +58,17 @@ export default function ScheduleForm({ closeModal, addEvent }: Props) {
     addEvent({
       title: values.title,
       start: dayjs(values.startDate).format('YYYY-MM-DD'),
-      end: allDay
-        ? dayjs(values.endDate).endOf('day').toDate()
-        : dayjs(values.startDate).format('YYYY-MM-DD'),
+      end: dayjs(values.endDate).format('YYYY-MM-DD'),
       allDay,
     });
     closeModal();
     form.resetFields();
   };
+
+  useEffect(() => {
+    titleInputRef.current?.focus(); // 렌더시 제목 입력창에 포커스
+  }, []);
+
   return (
     <Form
       form={form}
@@ -66,11 +77,11 @@ export default function ScheduleForm({ closeModal, addEvent }: Props) {
       layout="vertical"
       autoComplete="off"
       initialValues={{
-        startDate: dayjs(),
+        startDate: dayjs(selectedDate.startDate),
         startTime: roundToNearestTenMinutes(dayjs()),
-        endDate: dayjs(),
+        endDate: dayjs(selectedDate.endDate),
         endTime: roundToNearestTenMinutes(dayjs().add(1, 'hour')), // 1시간 뒤
-        allDay: false,
+        allDay,
       }}
     >
       <Row>
@@ -81,6 +92,7 @@ export default function ScheduleForm({ closeModal, addEvent }: Props) {
         >
           <Input
             placeholder="제목을 입력해 주세요."
+            ref={titleInputRef}
             style={{
               border: 'none',
               borderBottom: '1px solid #d9d9d9',
