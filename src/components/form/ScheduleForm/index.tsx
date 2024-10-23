@@ -65,6 +65,13 @@ export default function ScheduleForm({
     form.resetFields();
   };
 
+  /** enter 눌려서 폼 제출하기 막기 */
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // Enter 키 눌림 동작을 막음
+    }
+  };
+
   useEffect(() => {
     titleInputRef.current?.focus(); // 렌더시 제목 입력창에 포커스
   }, []);
@@ -83,6 +90,7 @@ export default function ScheduleForm({
         endTime: roundToNearestTenMinutes(dayjs().add(1, 'hour')), // 1시간 뒤
         allDay,
       }}
+      onKeyDown={handleKeyDown}
     >
       <Row>
         <Form.Item<FieldType>
