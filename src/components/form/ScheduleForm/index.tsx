@@ -30,19 +30,19 @@ interface Props {
   selectedDate: SelectedDate;
 }
 
-const format = 'HH:mm';
+const timePickerFormat = 'HH:mm';
 
 export default function ScheduleForm({
   closeModal,
   addEvent,
   selectedDate,
 }: Props) {
-  const [allDay, setAllDay] = useState(true);
+  const [allDay, setAllDay] = useState(selectedDate.allDay);
   const [form] = Form.useForm();
   const titleInputRef = useRef<InputRef>(null);
 
-  const onChangeAllDay = (checked: boolean) => {
-    setAllDay(checked);
+  const formatDate = (date: string, time?: string) => {
+    return `${dayjs(date).format('YYYY-MM-DD')}T${dayjs(time).format('HH:mm')}`;
   };
 
   const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
@@ -50,14 +50,10 @@ export default function ScheduleForm({
       title: values.title,
       start: allDay
         ? dayjs(values.startDate).format('YYYY-MM-DD')
-        : `${dayjs(values.startDate).format('YYYY-MM-DD')}T${dayjs(
-            values.startTime
-          ).format('HH:mm')}`,
+        : formatDate(values.startDate, values.startTime),
       end: allDay
         ? dayjs(values.endDate).add(1, 'day').format('YYYY-MM-DD') // 캘린더 종료일이 하루 일찍 표시되는 문제 해결
-        : `${dayjs(values.endDate).format('YYYY-MM-DD')}T${dayjs(
-            values.endTime
-          ).format('HH:mm')}`,
+        : formatDate(values.endDate, values.endTime),
       allDay,
     });
     closeModal();
@@ -74,10 +70,6 @@ export default function ScheduleForm({
   useEffect(() => {
     titleInputRef.current?.focus(); // 렌더시 제목 입력창에 포커스
   }, []);
-
-  useEffect(() => {
-    setAllDay(selectedDate.allDay);
-  }, [selectedDate]);
 
   return (
     <Form
@@ -126,7 +118,7 @@ export default function ScheduleForm({
             {!allDay && (
               <Form.Item<FieldType> name="startTime" className="mb-0">
                 <TimePicker
-                  format={format}
+                  format={timePickerFormat}
                   minuteStep={10}
                   allowClear={false}
                 />
@@ -142,7 +134,7 @@ export default function ScheduleForm({
               <Form.Item<FieldType> name="endTime" className="mb-0">
                 <TimePicker
                   allowClear={false}
-                  format={format}
+                  format={timePickerFormat}
                   minuteStep={10}
                 />
               </Form.Item>
@@ -158,7 +150,7 @@ export default function ScheduleForm({
         >
           <div className="flex items-center gap-2">
             <span>종일</span>
-            <Switch onChange={onChangeAllDay} checked={allDay} />
+            <Switch onChange={setAllDay} checked={allDay} />
           </div>
         </Form.Item>
       </Row>
