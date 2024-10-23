@@ -6,7 +6,11 @@ import interactionPlugin, {
 } from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import '../styles/Calendar.css';
-import { EventContentArg, EventInput } from '@fullcalendar/core/index.js';
+import {
+  DateSelectArg,
+  EventContentArg,
+  EventInput,
+} from '@fullcalendar/core/index.js';
 import { SelectedDate } from '../types/Calendar';
 import dayjs from 'dayjs';
 import { useEffect } from 'react';
@@ -45,26 +49,38 @@ export default function Calendar({
     // Update the event on the server or in your state as needed
   };
 
-  /**
-   * FullCalendar에서 종료일이 하루 일찍 표시되는 문제를 해결하기 위해
-   * 이벤트의 종료일을 하루 뒤로 조정하는 함수
-   */
-  const adjustEventEndDate = (events: EventInput[]) => {
-    return events.map((event) => {
-      if (!event.end) return event;
-
-      return {
-        ...event,
-        end: dayjs(event.end as string)
-          .add(1, 'day')
-          .format('YYYY-MM-DD'),
-      };
-    });
-  };
-
   useEffect(() => {
     console.log('events', events);
   }, [events]);
+
+  /** 주어진 시간을 가장 가까운 10분 단위로 변환하는 함수 */
+  const roundToNearestTenMinutes = (time: dayjs.Dayjs) => {
+    const minute = time.minute(); // 주어진 시간의 분 가져오기
+    const roundedMinute = Math.ceil(minute / 10) * 10; // 10분 단위로 올림
+
+    return time.minute(roundedMinute).second(0); // 분과 초를 조정한 새로운 객체 반환
+  };
+
+  const handleDateSelect = (arg: DateSelectArg) => {
+    const startDate = arg.allDay
+      ? `${dayjs(arg.startStr).format('YYYY-MM-DD')} ${roundToNearestTenMinutes(
+          dayjs()
+        ).format('HH:mm')}`
+      : dayjs(arg.startStr).format('YYYY-MM-DD HH:mm');
+    const endDate = arg.allDay
+      ? `${dayjs(arg.endStr).format('YYYY-MM-DD')} ${roundToNearestTenMinutes(
+          dayjs().add(1, 'hour')
+        ).format('HH:mm')}`
+      : dayjs(arg.endStr).format('YYYY-MM-DD HH:mm');
+
+    selectDate({
+      startDate,
+      endDate,
+      allDay: arg.allDay,
+    });
+
+    openAddScheduleModal();
+  };
 
   return (
     <FullCalendar
@@ -74,7 +90,6 @@ export default function Calendar({
         center: 'title',
         end: 'dayGridMonth timeGridWeek timeGridDay',
       }}
-      timeZone="local"
       initialView="dayGridMonth"
       height="100%"
       locale="ko"
@@ -85,16 +100,7 @@ export default function Calendar({
       eventDrop={handleEventDrop}
       eventResize={handleEventResize}
       selectable={true}
-      select={(arg) => {
-        // const adjustedEndDate = dayjs(arg.endStr)
-        //   .subtract(1, 'day')
-        //   .format('YYYY-MM-DD'); // 하루 빼기
-        selectDate({
-          startDate: arg.startStr,
-          endDate: arg.endStr,
-        });
-        openAddScheduleModal();
-      }}
+      select={handleDateSelect}
     />
   );
 }
