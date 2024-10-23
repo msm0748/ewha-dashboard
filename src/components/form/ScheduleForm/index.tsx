@@ -41,21 +41,11 @@ export default function ScheduleForm({
   const [form] = Form.useForm();
   const titleInputRef = useRef<InputRef>(null);
 
-  /** 주어진 시간을 가장 가까운 10분 단위로 변환하는 함수 */
-  const roundToNearestTenMinutes = (time: dayjs.Dayjs) => {
-    const minute = time.minute(); // 주어진 시간의 분 가져오기
-    const roundedMinute = Math.ceil(minute / 10) * 10; // 10분 단위로 올림
-
-    return time.minute(roundedMinute).second(0); // 분과 초를 조정한 새로운 객체 반환
-  };
-
   const onChangeAllDay = (checked: boolean) => {
     setAllDay(checked);
   };
 
   const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
-    console.log('Success:', values);
-    console.log('time', dayjs(values.startTime).format('HH:mm'));
     addEvent({
       title: values.title,
       start: allDay
@@ -85,6 +75,10 @@ export default function ScheduleForm({
     titleInputRef.current?.focus(); // 렌더시 제목 입력창에 포커스
   }, []);
 
+  useEffect(() => {
+    setAllDay(selectedDate.allDay);
+  }, [selectedDate]);
+
   return (
     <Form
       form={form}
@@ -94,9 +88,11 @@ export default function ScheduleForm({
       autoComplete="off"
       initialValues={{
         startDate: dayjs(selectedDate.startDate),
-        startTime: roundToNearestTenMinutes(dayjs()),
-        endDate: dayjs(selectedDate.endDate).subtract(1, 'day'), // 캘린더 종료일이 하루 늦게 표시되는 문제 해결
-        endTime: roundToNearestTenMinutes(dayjs().add(1, 'hour')), // 1시간 뒤
+        startTime: dayjs(selectedDate.startDate),
+        endDate: selectedDate.allDay
+          ? dayjs(selectedDate.endDate).subtract(1, 'day') // 캘린더 종료일이 하루 늦게 표시되는 문제 해결
+          : dayjs(selectedDate.endDate),
+        endTime: dayjs(selectedDate.endDate),
         allDay,
       }}
       onKeyDown={handleKeyDown}
@@ -162,7 +158,7 @@ export default function ScheduleForm({
         >
           <div className="flex items-center gap-2">
             <span>종일</span>
-            <Switch onChange={onChangeAllDay} defaultChecked />
+            <Switch onChange={onChangeAllDay} checked={allDay} />
           </div>
         </Form.Item>
       </Row>

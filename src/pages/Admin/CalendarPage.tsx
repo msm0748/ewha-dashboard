@@ -11,6 +11,7 @@ export default function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState<SelectedDate>({
     startDate: dayjs().format('YYYY-MM-DD'),
     endDate: dayjs().format('YYYY-MM-DD'),
+    allDay: true,
   });
   const [isAddScheduleModal, setIsAddScheduleModal] = useState(false);
 

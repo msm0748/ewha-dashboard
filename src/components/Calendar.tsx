@@ -62,11 +62,14 @@ export default function Calendar({
   };
 
   const handleDateSelect = (arg: DateSelectArg) => {
+    // allDay 일 경우 시간을 현재 시간으로 설정하고 아닌 경우 선택한 시간으로 설정
     const startDate = arg.allDay
       ? `${dayjs(arg.startStr).format('YYYY-MM-DD')} ${roundToNearestTenMinutes(
           dayjs()
         ).format('HH:mm')}`
       : dayjs(arg.startStr).format('YYYY-MM-DD HH:mm');
+
+    // allDay 일 경우 시간을 현재 시간 + 1시간으로 설정하고 아닌 경우 선택한 시간으로 설정
     const endDate = arg.allDay
       ? `${dayjs(arg.endStr).format('YYYY-MM-DD')} ${roundToNearestTenMinutes(
           dayjs().add(1, 'hour')
