@@ -1,4 +1,5 @@
 import { ClockCircleOutlined } from '@ant-design/icons';
+import { v4 as uuidv4 } from 'uuid';
 import {
   Button,
   DatePicker,
@@ -47,6 +48,7 @@ export default function ScheduleForm({
 
   const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
     addEvent({
+      id: uuidv4(),
       title: values.title,
       start: allDay
         ? dayjs(values.startDate).format('YYYY-MM-DD')

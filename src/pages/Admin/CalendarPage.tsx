@@ -23,6 +23,21 @@ export default function CalendarPage() {
     setEvents([...events, event]);
   };
 
+  const updateEvent = (id: string, start: string, end: string) => {
+    setEvents((event) => {
+      return event.map((item) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            start,
+            end,
+          };
+        }
+        return item;
+      });
+    });
+  };
+
   const selectDate = (selectedDate: SelectedDate) => {
     setSelectedDate(selectedDate);
   };
@@ -33,6 +48,7 @@ export default function CalendarPage() {
         events={events}
         openAddScheduleModal={openAddScheduleModal}
         selectDate={selectDate}
+        updateEvent={updateEvent}
       />
       {isAddScheduleModal && (
         <AddScheduleModal

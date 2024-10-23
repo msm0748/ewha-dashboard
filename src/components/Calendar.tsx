@@ -19,12 +19,14 @@ interface Props {
   events: EventInput[];
   openAddScheduleModal: () => void;
   selectDate: (selectedDate: SelectedDate) => void;
+  updateEvent: (id: string, start: string, end: string) => void;
 }
 
 export default function Calendar({
   events,
   openAddScheduleModal,
   selectDate,
+  updateEvent,
 }: Props) {
   const renderEventContent = (eventInfo: EventContentArg) => {
     return (
@@ -38,15 +40,19 @@ export default function Calendar({
   };
 
   const handleEventDrop = (info: EventDragStopArg) => {
-    console.log(info.event, 'eventDrop');
-    console.log(`${info.event.title} dropped to ${info.event.start}`);
+    const { event } = info;
+    console.log(event, 'eventDrop');
+    console.log(`${event.title} dropped to ${event.start}`);
     // Update the event on the server or in your state as needed
+    updateEvent(event.id, event.startStr, event.endStr);
   };
 
   const handleEventResize = (info: EventResizeDoneArg) => {
-    console.log(info.event, 'eventResize');
-    console.log(`${info.event.title} resized to ${info.event.start}`);
+    const { event } = info;
+    console.log(event, 'eventResize');
+    console.log(`${event.title} resized to ${event.start}`);
     // Update the event on the server or in your state as needed
+    updateEvent(event.id, event.startStr, event.endStr);
   };
 
   useEffect(() => {

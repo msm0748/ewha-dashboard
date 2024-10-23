@@ -1,4 +1,4 @@
-import { UserDataType } from '../types/User';
+import { UserDataType } from '../../types/User';
 
 export const userDummyData: UserDataType[] = [
   {
