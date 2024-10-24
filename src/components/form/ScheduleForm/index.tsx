@@ -47,6 +47,7 @@ export default function ScheduleForm({
   };
 
   const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
+    console.log('Success:', values);
     addEvent({
       id: uuidv4(),
       title: values.title,
@@ -145,14 +146,12 @@ export default function ScheduleForm({
         </div>
       </Row>
       <Row>
-        <Form.Item<FieldType>
-          name="allDay"
-          className="mb-0"
-          valuePropName="checked"
-        >
+        <Form.Item>
           <div className="flex items-center gap-2">
+            <Form.Item<FieldType> name="allDay" noStyle valuePropName="checked">
+              <Switch onChange={setAllDay} checked={allDay} />
+            </Form.Item>
             <span>종일</span>
-            <Switch onChange={setAllDay} checked={allDay} />
           </div>
         </Form.Item>
       </Row>
