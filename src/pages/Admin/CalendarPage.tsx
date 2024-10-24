@@ -5,6 +5,7 @@ import { EventInput } from '@fullcalendar/core/index.js';
 import { eventDumyData } from '../../data/dumy/eventsDumyData';
 import { SelectedDate } from '../../types/Calendar';
 import dayjs from 'dayjs';
+import { useModal } from '../../hooks/useModal';
 
 export default function CalendarPage() {
   const [events, setEvents] = useState<EventInput[]>(eventDumyData);
@@ -13,11 +14,8 @@ export default function CalendarPage() {
     endDate: dayjs().format('YYYY-MM-DD'),
     allDay: true,
   });
-  const [isAddScheduleModal, setIsAddScheduleModal] = useState(false);
 
-  const openAddScheduleModal = () => {
-    setIsAddScheduleModal(true);
-  };
+  const { isOpen, openModal, closeModal } = useModal();
 
   const addEvent = (event: EventInput) => {
     setEvents([...events, event]);
@@ -46,14 +44,14 @@ export default function CalendarPage() {
     <div className="h-full">
       <Calendar
         events={events}
-        openAddScheduleModal={openAddScheduleModal}
+        openAddScheduleModal={openModal}
         selectDate={selectDate}
         updateEvent={updateEvent}
       />
-      {isAddScheduleModal && (
+      {isOpen && (
         <AddScheduleModal
-          open={isAddScheduleModal}
-          closeModal={() => setIsAddScheduleModal(false)}
+          open={isOpen}
+          closeModal={closeModal}
           addEvent={addEvent}
           selectedDate={selectedDate}
         />

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Button, Table } from 'antd';
 import { Input, TableColumnsType, TableProps } from 'antd';
 import AddUserModal from '../../components/modal/AddUserModal';
@@ -6,6 +5,7 @@ import { UserDataType } from '../../types/User';
 import { useUsers } from '../../hooks/useUsers';
 import { userDummyData } from '../../data/dumy/userDummyData';
 import DeleteUserModal from '../../components/modal/DeleteUserModal';
+import { useModal } from '../../hooks/useModal';
 const { Search } = Input;
 
 const columns: TableColumnsType<UserDataType> = [
@@ -109,8 +109,17 @@ export default function UsersPage() {
     handleSearch,
   } = useUsers(userDummyData);
 
-  const [isAddUserModal, setIsAddUserModal] = useState(false);
-  const [isDeleteUserModal, setIsDeleteUserModal] = useState(false);
+  const {
+    isOpen: isAddUserModalOpen,
+    openModal: openAddUserModal,
+    closeModal: closeAddUserModal,
+  } = useModal();
+
+  const {
+    isOpen: isDeleteUserModalOpen,
+    openModal: openDeleteUserModal,
+    closeModal: closeDeleteUserModal,
+  } = useModal();
 
   const rowSelection: TableProps<UserDataType>['rowSelection'] = {
     onChange: (selectedRowKeys: React.Key[]) => {
@@ -132,12 +141,12 @@ export default function UsersPage() {
           />
         </div>
         <div className="flex gap-4">
-          <Button type="primary" onClick={() => setIsAddUserModal(true)}>
+          <Button type="primary" onClick={openAddUserModal}>
             회원 등록
           </Button>
           <Button
             danger
-            onClick={() => setIsDeleteUserModal(true)}
+            onClick={openDeleteUserModal}
             disabled={selectedUsers.length === 0}
           >
             회원 삭제
@@ -155,14 +164,14 @@ export default function UsersPage() {
       />
 
       <AddUserModal
-        open={isAddUserModal}
-        closeModal={() => setIsAddUserModal(false)}
+        open={isAddUserModalOpen}
+        closeModal={closeAddUserModal}
         addUser={addUser}
       />
 
       <DeleteUserModal
-        open={isDeleteUserModal}
-        onCancel={() => setIsDeleteUserModal(false)}
+        open={isDeleteUserModalOpen}
+        onCancel={closeDeleteUserModal}
         onOk={deleteSelectedUsers}
       />
     </div>
