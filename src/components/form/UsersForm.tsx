@@ -2,7 +2,6 @@ import type { FormProps } from 'antd';
 import { Button, DatePicker, Form, Input, Select } from 'antd';
 import dayjs from 'dayjs';
 import { UserDataType } from '../../types/User';
-import { useEffect } from 'react';
 const { TextArea } = Input;
 const { Option } = Select;
 
