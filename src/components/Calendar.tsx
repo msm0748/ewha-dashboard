@@ -5,7 +5,7 @@ import interactionPlugin, {
   EventResizeDoneArg,
 } from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import '../styles/Calendar.css';
+import '../styles/calendar.css';
 import {
   DateSelectArg,
   EventContentArg,
