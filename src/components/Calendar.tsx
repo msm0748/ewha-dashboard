@@ -39,16 +39,16 @@ export default function Calendar({
     );
   };
 
-  const handleEventDrop = (info: EventDragStopArg) => {
-    const { event } = info;
+  const handleEventDrop = (arg: EventDragStopArg) => {
+    const { event } = arg;
     console.log(event, 'eventDrop');
     console.log(`${event.title} dropped to ${event.start}`);
     // Update the event on the server or in your state as needed
     updateEvent(event.id, event.startStr, event.endStr);
   };
 
-  const handleEventResize = (info: EventResizeDoneArg) => {
-    const { event } = info;
+  const handleEventResize = (arg: EventResizeDoneArg) => {
+    const { event } = arg;
     console.log(event, 'eventResize');
     console.log(`${event.title} resized to ${event.start}`);
     // Update the event on the server or in your state as needed
@@ -68,16 +68,20 @@ export default function Calendar({
   };
 
   const handleDateSelect = (arg: DateSelectArg) => {
-    // allDay 일 경우 시간을 현재 시간으로 설정하고 아닌 경우 선택한 시간으로 설정
+    console.log(arg, 'arg');
+    // allDay 일 경우 시간을 현재 시간으로 설정하고 아닌 경우 선택한 시간으로 설정 - allDay로 선택 후 폼에서 allDay 체크 해제 시 현재 시간으로 설정하기 위함
     const startDate = arg.allDay
       ? `${dayjs(arg.startStr).format('YYYY-MM-DD')} ${roundToNearestTenMinutes(
           dayjs()
         ).format('HH:mm')}`
       : dayjs(arg.startStr).format('YYYY-MM-DD HH:mm');
 
-    // allDay 일 경우 시간을 현재 시간 + 1시간으로 설정하고 아닌 경우 선택한 시간으로 설정
+    // allDay 일 경우 시간을 현재 시간 + 1시간으로 설정하고 아닌 경우 선택한 시간으로 설정 - allDay로 선택 후 폼에서 allDay 체크 해제 시 현재 시간 + 1시간으로 설정하기 위함
     const endDate = arg.allDay
-      ? `${dayjs(arg.endStr).format('YYYY-MM-DD')} ${roundToNearestTenMinutes(
+      ? `${dayjs(arg.endStr)
+          // fullcalendar에서 endStr은 선택한 날짜의 1일을 더해주기 때문 -1일을 해줌
+          .subtract(1, 'day')
+          .format('YYYY-MM-DD')} ${roundToNearestTenMinutes(
           dayjs().add(1, 'hour')
         ).format('HH:mm')}`
       : dayjs(arg.endStr).format('YYYY-MM-DD HH:mm');
@@ -102,7 +106,15 @@ export default function Calendar({
       initialView="dayGridMonth"
       height="100%"
       locale="ko"
-      events={events}
+      events={events.map((event) => ({
+        ...event,
+        // allDay가 true일 경우, end 날짜를 +1 해주는 이유는 fullcalendar에서 end 날짜는 선택한 날짜의 1일을 더해야 그 날짜까지 포함해서 그려주기 때문
+        end: event.allDay
+          ? dayjs(event.end as string)
+              .add(1, 'day')
+              .format('YYYY-MM-DD')
+          : event.end,
+      }))}
       eventContent={renderEventContent}
       editable={true}
       droppable={true}
