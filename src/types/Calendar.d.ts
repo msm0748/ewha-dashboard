@@ -3,3 +3,11 @@ export type SelectedDate = {
   endDate: string;
   allDay: boolean;
 };
+
+export type UpdateEventArg = {
+  id: string;
+  title: string;
+  start: string;
+  end: string;
+  allDay: boolean;
+};

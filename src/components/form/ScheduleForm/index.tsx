@@ -14,7 +14,8 @@ import Row from './Row';
 import { useEffect, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import { EventInput } from '@fullcalendar/core/index.js';
-import { SelectedDate } from '../../../types/Calendar';
+import { SelectedDate, UpdateEventArg } from '../../../types/Calendar';
+import { roundToNearestTenMinutes } from '../../../utils/roundToNearestTenMinutes';
 
 type FieldType = {
   title: string;
@@ -29,6 +30,10 @@ interface Props {
   closeModal: () => void;
   addEvent: (event: EventInput) => void;
   selectedDate: SelectedDate;
+  selectedEvent: EventInput | null;
+  isEditingMode: boolean;
+  initialAllDay: boolean;
+  updateEvent: (event: UpdateEventArg) => void;
 }
 
 const timePickerFormat = 'HH:mm';
@@ -37,8 +42,12 @@ export default function ScheduleForm({
   closeModal,
   addEvent,
   selectedDate,
+  selectedEvent,
+  isEditingMode,
+  updateEvent,
+  initialAllDay,
 }: Props) {
-  const [allDay, setAllDay] = useState(selectedDate.allDay);
+  const [allDay, setAllDay] = useState(initialAllDay);
   const [form] = Form.useForm();
   const titleInputRef = useRef<InputRef>(null);
 
@@ -48,17 +57,31 @@ export default function ScheduleForm({
 
   const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
     console.log('Success:', values);
-    addEvent({
-      id: uuidv4(),
-      title: values.title,
-      start: allDay
-        ? dayjs(values.startDate).format('YYYY-MM-DD')
-        : formatDate(values.startDate, values.startTime),
-      end: allDay
-        ? dayjs(values.endDate).add(1, 'day').format('YYYY-MM-DD') // 캘린더 종료일이 하루 일찍 표시되는 문제 해결
-        : formatDate(values.endDate, values.endTime),
-      allDay,
-    });
+    if (isEditingMode && selectedEvent) {
+      updateEvent({
+        id: selectedEvent.id as string,
+        title: values.title,
+        start: allDay
+          ? dayjs(values.startDate).format('YYYY-MM-DD')
+          : formatDate(values.startDate, values.startTime),
+        end: allDay
+          ? dayjs(values.endDate).add(1, 'day').format('YYYY-MM-DD') // 캘린더 종료일이 하루 일찍 표시되는 문제 해결
+          : formatDate(values.endDate, values.endTime),
+        allDay,
+      });
+    } else {
+      addEvent({
+        id: uuidv4(),
+        title: values.title,
+        start: allDay
+          ? dayjs(values.startDate).format('YYYY-MM-DD')
+          : formatDate(values.startDate, values.startTime),
+        end: allDay
+          ? dayjs(values.endDate).add(1, 'day').format('YYYY-MM-DD') // 캘린더 종료일이 하루 일찍 표시되는 문제 해결
+          : formatDate(values.endDate, values.endTime),
+        allDay,
+      });
+    }
     closeModal();
     form.resetFields();
   };
@@ -74,22 +97,35 @@ export default function ScheduleForm({
     titleInputRef.current?.focus(); // 렌더시 제목 입력창에 포커스
   }, []);
 
+  const initialValues =
+    isEditingMode && selectedEvent
+      ? {
+          title: selectedEvent.title,
+          startDate: dayjs(selectedEvent.start as string),
+          startTime: roundToNearestTenMinutes(dayjs()),
+          endDate: allDay
+            ? dayjs(selectedEvent.end as string).subtract(1, 'day')
+            : dayjs(selectedEvent.end as string), // 캘린더 종료일이 하루 늦게 표시되는 문제 해결,
+          endTime: roundToNearestTenMinutes(dayjs().add(1, 'hour')),
+          allDay,
+        }
+      : {
+          startDate: dayjs(selectedDate.startDate),
+          startTime: dayjs(selectedDate.startDate),
+          endDate: allDay
+            ? dayjs(selectedDate.endDate).subtract(1, 'day') // 캘린더 종료일이 하루 늦게 표시되는 문제 해결
+            : dayjs(selectedDate.endDate),
+          endTime: dayjs(selectedDate.endDate),
+          allDay,
+        };
+
   return (
     <Form
       form={form}
       onFinish={onFinish}
-      //   onFinishFailed={onFinishFailed}
       layout="vertical"
       autoComplete="off"
-      initialValues={{
-        startDate: dayjs(selectedDate.startDate),
-        startTime: dayjs(selectedDate.startDate),
-        endDate: selectedDate.allDay
-          ? dayjs(selectedDate.endDate).subtract(1, 'day') // 캘린더 종료일이 하루 늦게 표시되는 문제 해결
-          : dayjs(selectedDate.endDate),
-        endTime: dayjs(selectedDate.endDate),
-        allDay,
-      }}
+      initialValues={initialValues}
       onKeyDown={handleKeyDown}
     >
       <Row>

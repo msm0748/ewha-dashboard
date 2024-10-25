@@ -1,13 +1,15 @@
 import { Modal } from 'antd';
 import ScheduleForm from '../form/ScheduleForm';
 import { EventInput } from '@fullcalendar/core/index.js';
-import { SelectedDate } from '../../types/Calendar';
+import { SelectedDate, UpdateEventArg } from '../../types/Calendar';
 
 interface Props {
   open: boolean;
   closeModal: () => void;
   addEvent: (event: EventInput) => void;
   selectedDate: SelectedDate;
+  selectedEvent: EventInput | null;
+  updateEvent: (event: UpdateEventArg) => void;
 }
 
 export default function AddScheduleModal({
@@ -15,6 +17,8 @@ export default function AddScheduleModal({
   closeModal,
   addEvent,
   selectedDate,
+  selectedEvent,
+  updateEvent,
 }: Props) {
   return (
     <Modal
@@ -29,6 +33,14 @@ export default function AddScheduleModal({
           closeModal={closeModal}
           addEvent={addEvent}
           selectedDate={selectedDate}
+          selectedEvent={selectedEvent}
+          isEditingMode={!!selectedEvent}
+          updateEvent={updateEvent}
+          initialAllDay={
+            selectedEvent
+              ? (selectedEvent.allDay as boolean)
+              : selectedDate.allDay
+          }
         />
       </div>
     </Modal>

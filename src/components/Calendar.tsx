@@ -8,18 +8,22 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import '../styles/calendar.css';
 import {
   DateSelectArg,
+  EventClickArg,
   EventContentArg,
   EventInput,
 } from '@fullcalendar/core/index.js';
-import { SelectedDate } from '../types/Calendar';
+import { SelectedDate, UpdateEventArg } from '../types/Calendar';
 import dayjs from 'dayjs';
-import { useEffect } from 'react';
+import { Dispatch, SetStateAction } from 'react';
+import { roundToNearestTenMinutes } from '../utils/roundToNearestTenMinutes';
 
 interface Props {
   events: EventInput[];
   openAddScheduleModal: () => void;
   selectDate: (selectedDate: SelectedDate) => void;
-  updateEvent: (id: string, start: string, end: string) => void;
+  updateEvent: (event: UpdateEventArg) => void;
+  openModal: () => void;
+  setSelectedEvent: Dispatch<SetStateAction<EventInput | null>>;
 }
 
 export default function Calendar({
@@ -27,9 +31,10 @@ export default function Calendar({
   openAddScheduleModal,
   selectDate,
   updateEvent,
+  openModal,
+  setSelectedEvent,
 }: Props) {
   const renderEventContent = (eventInfo: EventContentArg) => {
-    console.log(eventInfo, 'eventInfo');
     return (
       <div className="flex items-center">
         {eventInfo.event.title === '휴가' && (
@@ -42,34 +47,32 @@ export default function Calendar({
 
   const handleEventDrop = (arg: EventDragStopArg) => {
     const { event } = arg;
-    console.log(event, 'eventDrop');
-    console.log(`${event.title} dropped to ${event.start}`);
-    // Update the event on the server or in your state as needed
-    updateEvent(event.id, event.startStr, event.endStr);
+
+    const newEvent = {
+      id: event.id,
+      title: event.title,
+      start: event.startStr,
+      end: event.endStr,
+      allDay: event.allDay,
+    };
+    updateEvent(newEvent);
   };
 
   const handleEventResize = (arg: EventResizeDoneArg) => {
     const { event } = arg;
-    console.log(event, 'eventResize');
-    console.log(`${event.title} resized to ${event.start}`);
-    // Update the event on the server or in your state as needed
-    updateEvent(event.id, event.startStr, event.endStr);
-  };
 
-  // useEffect(() => {
-  //   console.log('events', events);
-  // }, [events]);
+    const newEvent = {
+      id: event.id,
+      title: event.title,
+      start: event.startStr,
+      end: event.endStr,
+      allDay: event.allDay,
+    };
 
-  /** 주어진 시간을 가장 가까운 10분 단위로 변환하는 함수 */
-  const roundToNearestTenMinutes = (time: dayjs.Dayjs) => {
-    const minute = time.minute(); // 주어진 시간의 분 가져오기
-    const roundedMinute = Math.ceil(minute / 10) * 10; // 10분 단위로 올림
-
-    return time.minute(roundedMinute).second(0); // 분과 초를 조정한 새로운 객체 반환
+    updateEvent(newEvent);
   };
 
   const handleDateSelect = (arg: DateSelectArg) => {
-    console.log(arg, 'arg');
     // allDay 일 경우 시간을 현재 시간으로 설정하고 아닌 경우 선택한 시간으로 설정 - allDay로 선택 후 폼에서 allDay 체크 해제 시 현재 시간으로 설정하기 위함
     const startDate = arg.allDay
       ? `${dayjs(arg.startStr).format('YYYY-MM-DD')} ${roundToNearestTenMinutes(
@@ -93,6 +96,18 @@ export default function Calendar({
     openAddScheduleModal();
   };
 
+  const handleEventClick = (arg: EventClickArg) => {
+    const { event } = arg;
+    setSelectedEvent({
+      id: event.id,
+      title: event.title,
+      start: event.startStr,
+      end: event.endStr,
+      allDay: event.allDay,
+    });
+    openModal();
+  };
+
   return (
     <FullCalendar
       plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
@@ -112,6 +127,7 @@ export default function Calendar({
       eventResize={handleEventResize}
       selectable={true}
       select={handleDateSelect}
+      eventClick={handleEventClick}
     />
   );
 }
