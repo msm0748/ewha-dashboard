@@ -1,109 +1,19 @@
-import { Button, Table } from 'antd';
-import { Input, TableColumnsType, TableProps } from 'antd';
+import { Button } from 'antd';
+import { Input } from 'antd';
 import AddUserModal from '../../components/modal/AddUserModal';
-import { UserDataType } from '../../types/User';
 import { useUsers } from '../../hooks/useUsers';
 import { userDummyData } from '../../data/dumy/userDummyData';
 import { useModal } from '../../hooks/useModal';
 import DeleteConfirmModal from '../../components/modal/DeleteConfirmModal';
+import UserTable from '../../components/UserTable';
 const { Search } = Input;
-
-const columns: TableColumnsType<UserDataType> = [
-  {
-    title: '코드',
-    dataIndex: 'code',
-    render: (text: string) => <a className="text-blue-500">{text}</a>,
-    fixed: 'left',
-    width: 120,
-  },
-  {
-    title: '생년월일',
-    dataIndex: 'birth',
-    fixed: 'left',
-    width: 130,
-  },
-  {
-    title: '성별',
-    dataIndex: 'gender',
-    fixed: 'left',
-    width: 60,
-  },
-  {
-    title: '기기',
-    dataIndex: 'device',
-    fixed: 'left',
-    width: 100,
-  },
-  {
-    title: '동의서',
-    dataIndex: 'consentForm',
-    fixed: 'left',
-    filters: [
-      {
-        text: '제출',
-        value: '제출',
-      },
-      {
-        text: '미제출',
-        value: '미제출',
-      },
-    ],
-    width: 100,
-    onFilter: (value, record) =>
-      record.consentForm.indexOf(value as string) === 0,
-  },
-  {
-    title: '설문',
-    dataIndex: 'survey',
-    filters: [
-      {
-        text: '제출',
-        value: '제출',
-      },
-      {
-        text: '미제출',
-        value: '미제출',
-      },
-    ],
-    onFilter: (value, record) => record.survey.indexOf(value as string) === 0,
-    width: 100,
-  },
-  {
-    title: '생체신호',
-    dataIndex: 'step1',
-  },
-  {
-    title: '신체계측',
-    dataIndex: 'step2',
-  },
-  {
-    title: '약물복용력',
-    dataIndex: 'step3',
-  },
-  {
-    title: '기타',
-    dataIndex: 'etc',
-  },
-  {
-    title: '비고',
-    dataIndex: 'note',
-  },
-  {
-    title: 'Start',
-    dataIndex: 'start',
-  },
-  {
-    title: 'End',
-    dataIndex: 'end',
-  },
-];
 
 export default function UsersPage() {
   const {
     users,
-    selectedUsers,
+    usersToDelete,
     searchKeyword,
-    setSelectedUsers,
+    setUsersToDelete,
     addUser,
     deleteSelectedUsers,
     handleSearch,
@@ -120,12 +30,6 @@ export default function UsersPage() {
     openModal: openDeleteUserModal,
     closeModal: closeDeleteUserModal,
   } = useModal();
-
-  const rowSelection: TableProps<UserDataType>['rowSelection'] = {
-    onChange: (selectedRowKeys: React.Key[]) => {
-      setSelectedUsers(selectedRowKeys);
-    },
-  };
 
   return (
     <div>
@@ -147,21 +51,14 @@ export default function UsersPage() {
           <Button
             danger
             onClick={openDeleteUserModal}
-            disabled={selectedUsers.length === 0}
+            disabled={usersToDelete.length === 0}
           >
             회원 삭제
           </Button>
         </div>
       </div>
 
-      <Table<UserDataType>
-        rowSelection={{ type: 'checkbox', ...rowSelection, columnWidth: 40 }}
-        virtual
-        scroll={{ x: 2000, y: 400 }}
-        columns={columns}
-        dataSource={users}
-        pagination={false}
-      />
+      <UserTable users={users} setUsersToDelete={setUsersToDelete} />
 
       <AddUserModal
         open={isAddUserModalOpen}
