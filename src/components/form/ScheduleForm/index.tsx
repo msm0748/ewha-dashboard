@@ -16,6 +16,8 @@ import dayjs from 'dayjs';
 import { EventInput } from '@fullcalendar/core/index.js';
 import { SelectedDate, UpdateEventArg } from '../../../types/Calendar';
 import { roundToNearestTenMinutes } from '../../../utils/roundToNearestTenMinutes';
+import { useModal } from '../../../hooks/useModal';
+import DeleteConfirmModal from '../../modal/DeleteConfirmModal';
 
 type FieldType = {
   title: string;
@@ -34,6 +36,7 @@ interface Props {
   isEditingMode: boolean;
   initialAllDay: boolean;
   updateEvent: (event: UpdateEventArg) => void;
+  deleteEvent: (id: string) => void;
 }
 
 const timePickerFormat = 'HH:mm';
@@ -46,10 +49,17 @@ export default function ScheduleForm({
   isEditingMode,
   updateEvent,
   initialAllDay,
+  deleteEvent,
 }: Props) {
   const [allDay, setAllDay] = useState(initialAllDay);
   const [form] = Form.useForm();
   const titleInputRef = useRef<InputRef>(null);
+
+  const {
+    isOpen: isDeleteModalOpen,
+    closeModal: closeDeleteModal,
+    openModal: openDeleteModal,
+  } = useModal();
 
   const formatDate = (date: string, time?: string) => {
     return `${dayjs(date).format('YYYY-MM-DD')}T${dayjs(time).format('HH:mm')}`;
@@ -59,7 +69,7 @@ export default function ScheduleForm({
     console.log('Success:', values);
     if (isEditingMode && selectedEvent) {
       updateEvent({
-        id: selectedEvent.id as string,
+        id: selectedEvent.id!,
         title: values.title,
         start: allDay
           ? dayjs(values.startDate).format('YYYY-MM-DD')
@@ -97,6 +107,11 @@ export default function ScheduleForm({
     titleInputRef.current?.focus(); // 렌더시 제목 입력창에 포커스
   }, []);
 
+  const handleDeleteEvent = () => {
+    deleteEvent(selectedEvent!.id!);
+    closeModal();
+  };
+
   const initialValues =
     isEditingMode && selectedEvent
       ? {
@@ -126,83 +141,98 @@ export default function ScheduleForm({
         };
 
   return (
-    <Form
-      form={form}
-      onFinish={onFinish}
-      layout="vertical"
-      autoComplete="off"
-      initialValues={initialValues}
-      onKeyDown={handleKeyDown}
-    >
-      <Row>
-        <Form.Item<FieldType>
-          name="title"
-          className="mb-0"
-          rules={[{ required: true, message: '제목을 입력해 주세요.' }]}
-        >
-          <Input
-            placeholder="제목을 입력해 주세요."
-            ref={titleInputRef}
-            style={{
-              border: 'none',
-              borderBottom: '1px solid #d9d9d9',
-              borderRadius: 0,
-            }}
-            className="focus:shadow-none"
-            size="large"
-          />
-        </Form.Item>
-      </Row>
+    <>
+      <Form
+        form={form}
+        onFinish={onFinish}
+        layout="vertical"
+        autoComplete="off"
+        initialValues={initialValues}
+        onKeyDown={handleKeyDown}
+      >
+        <Row>
+          <Form.Item<FieldType>
+            name="title"
+            className="mb-0"
+            rules={[{ required: true, message: '제목을 입력해 주세요.' }]}
+          >
+            <Input
+              placeholder="제목을 입력해 주세요."
+              ref={titleInputRef}
+              style={{
+                border: 'none',
+                borderBottom: '1px solid #d9d9d9',
+                borderRadius: 0,
+              }}
+              className="focus:shadow-none"
+              size="large"
+            />
+          </Form.Item>
+        </Row>
 
-      <Row icon={<ClockCircleOutlined />}>
-        <div className="flex items-center gap-3">
-          <div className="flex gap-2">
-            <Form.Item<FieldType> name="startDate" className="mb-0">
-              <DatePicker allowClear={false} />
-            </Form.Item>
-            {!allDay && (
-              <Form.Item<FieldType> name="startTime" className="mb-0">
-                <TimePicker
-                  format={timePickerFormat}
-                  minuteStep={10}
-                  allowClear={false}
-                />
+        <Row icon={<ClockCircleOutlined />}>
+          <div className="flex items-center gap-3">
+            <div className="flex gap-2">
+              <Form.Item<FieldType> name="startDate" className="mb-0">
+                <DatePicker allowClear={false} />
               </Form.Item>
-            )}
-          </div>
-          <div>~</div>
-          <div className="flex gap-2">
-            <Form.Item<FieldType> name="endDate" className="mb-0">
-              <DatePicker allowClear={false} />
-            </Form.Item>
-            {!allDay && (
-              <Form.Item<FieldType> name="endTime" className="mb-0">
-                <TimePicker
-                  allowClear={false}
-                  format={timePickerFormat}
-                  minuteStep={10}
-                />
+              {!allDay && (
+                <Form.Item<FieldType> name="startTime" className="mb-0">
+                  <TimePicker
+                    format={timePickerFormat}
+                    minuteStep={10}
+                    allowClear={false}
+                  />
+                </Form.Item>
+              )}
+            </div>
+            <div>~</div>
+            <div className="flex gap-2">
+              <Form.Item<FieldType> name="endDate" className="mb-0">
+                <DatePicker allowClear={false} />
               </Form.Item>
-            )}
+              {!allDay && (
+                <Form.Item<FieldType> name="endTime" className="mb-0">
+                  <TimePicker
+                    allowClear={false}
+                    format={timePickerFormat}
+                    minuteStep={10}
+                  />
+                </Form.Item>
+              )}
+            </div>
           </div>
+        </Row>
+        <Row>
+          <Form.Item>
+            <div className="flex items-center gap-2">
+              <Form.Item<FieldType>
+                name="allDay"
+                noStyle
+                valuePropName="checked"
+              >
+                <Switch onChange={setAllDay} checked={allDay} />
+              </Form.Item>
+              <span>종일</span>
+            </div>
+          </Form.Item>
+        </Row>
+
+        <div className="flex gap-5">
+          {selectedEvent && isEditingMode && (
+            <Button onClick={openDeleteModal}>삭제</Button>
+          )}
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
         </div>
-      </Row>
-      <Row>
-        <Form.Item>
-          <div className="flex items-center gap-2">
-            <Form.Item<FieldType> name="allDay" noStyle valuePropName="checked">
-              <Switch onChange={setAllDay} checked={allDay} />
-            </Form.Item>
-            <span>종일</span>
-          </div>
-        </Form.Item>
-      </Row>
-
-      <div className="flex justify-end gap-5">
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-      </div>
-    </Form>
+      </Form>
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        closeModal={closeDeleteModal}
+        onConfirm={handleDeleteEvent}
+        title="일정 삭제"
+      />
+    </>
   );
 }

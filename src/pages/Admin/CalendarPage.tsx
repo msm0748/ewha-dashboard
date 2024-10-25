@@ -75,6 +75,7 @@ export default function CalendarPage() {
           selectedDate={selectedDate}
           selectedEvent={selectedEvent}
           updateEvent={updateEvent}
+          deleteEvent={deleteEvent}
         />
       )}
     </div>

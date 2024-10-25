@@ -10,6 +10,7 @@ interface Props {
   selectedDate: SelectedDate;
   selectedEvent: EventInput | null;
   updateEvent: (event: UpdateEventArg) => void;
+  deleteEvent: (id: string) => void;
 }
 
 export default function ScheduleFormModal({
@@ -19,6 +20,7 @@ export default function ScheduleFormModal({
   selectedDate,
   selectedEvent,
   updateEvent,
+  deleteEvent,
 }: Props) {
   return (
     <Modal
@@ -41,6 +43,7 @@ export default function ScheduleFormModal({
               ? (selectedEvent.allDay as boolean)
               : selectedDate.allDay
           }
+          deleteEvent={deleteEvent}
         />
       </div>
     </Modal>

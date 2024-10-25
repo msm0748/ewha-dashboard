@@ -4,8 +4,8 @@ import AddUserModal from '../../components/modal/AddUserModal';
 import { UserDataType } from '../../types/User';
 import { useUsers } from '../../hooks/useUsers';
 import { userDummyData } from '../../data/dumy/userDummyData';
-import DeleteUserModal from '../../components/modal/DeleteUserModal';
 import { useModal } from '../../hooks/useModal';
+import DeleteConfirmModal from '../../components/modal/DeleteConfirmModal';
 const { Search } = Input;
 
 const columns: TableColumnsType<UserDataType> = [
@@ -169,10 +169,11 @@ export default function UsersPage() {
         addUser={addUser}
       />
 
-      <DeleteUserModal
-        open={isDeleteUserModalOpen}
-        onCancel={closeDeleteUserModal}
-        onOk={deleteSelectedUsers}
+      <DeleteConfirmModal
+        title="유저 삭제"
+        isOpen={isDeleteUserModalOpen}
+        closeModal={closeDeleteUserModal}
+        onConfirm={deleteSelectedUsers}
       />
     </div>
   );
