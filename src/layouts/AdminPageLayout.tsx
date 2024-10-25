@@ -32,10 +32,21 @@ export default function AdminPageLayout() {
     navigate(path);
   };
 
+  const siderStyle: React.CSSProperties = {
+    overflow: 'auto',
+    // height: '100vh',
+    position: 'fixed',
+    insetInlineStart: 0,
+    top: 0,
+    bottom: 0,
+    scrollbarWidth: 'thin',
+    scrollbarGutter: 'stable',
+  };
+
   return (
-    <div className="h-dvh flex">
-      <Layout>
-        <Sider trigger={null} collapsible>
+    <div className="min-h-dvh flex">
+      <Layout hasSider>
+        <Sider trigger={null} collapsible style={siderStyle}>
           <div className="p-4 font-bold text-xl text-white">
             로고 or 노인 취약
           </div>
@@ -53,7 +64,7 @@ export default function AdminPageLayout() {
             })}
           />
         </Sider>
-        <Layout>
+        <Layout style={{ marginInlineStart: 200 }}>
           <Content
             style={{
               margin: '24px 16px',
