@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Calendar from '../../components/Calendar';
-import AddScheduleModal from '../../components/modal/AddScheduleModal';
+import ScheduleFormModal from '../../components/modal/ScheduleFormModal';
 import { EventInput } from '@fullcalendar/core/index.js';
 import { eventDumyData } from '../../data/dumy/eventsDumyData';
 import { SelectedDate, UpdateEventArg } from '../../types/Calendar';
@@ -40,6 +40,10 @@ export default function CalendarPage() {
     });
   };
 
+  const deleteEvent = (id: string) => {
+    setEvents(events.filter((event) => event.id !== id));
+  };
+
   const selectDate = (selectedDate: SelectedDate) => {
     setSelectedDate(selectedDate);
   };
@@ -64,7 +68,7 @@ export default function CalendarPage() {
         setSelectedEvent={setSelectedEvent}
       />
       {isOpen && (
-        <AddScheduleModal
+        <ScheduleFormModal
           open={isOpen}
           closeModal={handleCloseModal}
           addEvent={addEvent}

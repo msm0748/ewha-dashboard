@@ -102,11 +102,17 @@ export default function ScheduleForm({
       ? {
           title: selectedEvent.title,
           startDate: dayjs(selectedEvent.start as string),
-          startTime: roundToNearestTenMinutes(dayjs()),
+          // allDay가 true일 경우 startTime이 없으므로 현재 시간 설정
+          startTime: allDay
+            ? roundToNearestTenMinutes(dayjs())
+            : dayjs(selectedEvent.start as string),
           endDate: allDay
-            ? dayjs(selectedEvent.end as string).subtract(1, 'day')
-            : dayjs(selectedEvent.end as string), // 캘린더 종료일이 하루 늦게 표시되는 문제 해결,
-          endTime: roundToNearestTenMinutes(dayjs().add(1, 'hour')),
+            ? dayjs(selectedEvent.end as string).subtract(1, 'day') // 캘린더 종료일이 하루 늦게 표시되는 문제 해결,
+            : dayjs(selectedEvent.end as string),
+          endTime: allDay
+            ? // allDay가 true일 경우 startTime이 없으므로 현재 시간 설정
+              roundToNearestTenMinutes(dayjs().add(1, 'hour'))
+            : dayjs(selectedEvent.end as string),
           allDay,
         }
       : {

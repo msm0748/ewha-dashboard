@@ -98,6 +98,8 @@ export default function Calendar({
 
   const handleEventClick = (arg: EventClickArg) => {
     const { event } = arg;
+
+    console.log(event, 'event');
     setSelectedEvent({
       id: event.id,
       title: event.title,

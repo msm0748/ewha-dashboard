@@ -12,7 +12,7 @@ interface Props {
   updateEvent: (event: UpdateEventArg) => void;
 }
 
-export default function AddScheduleModal({
+export default function ScheduleFormModal({
   open,
   closeModal,
   addEvent,
