@@ -1,0 +1,10 @@
+/* displayModeBar CSS */
+.js-plotly-plot .plotly .modebar {
+  display: flex;
+  gap: 4px;
+}
+
+.js-plotly-plot .plotly .modebar-group {
+  display: flex;
+  padding: 0;
+}
