@@ -55,7 +55,7 @@ export default function ScheduleForm({
         ? dayjs(values.startDate).format('YYYY-MM-DD')
         : formatDate(values.startDate, values.startTime),
       end: allDay
-        ? dayjs(values.endDate).format('YYYY-MM-DD')
+        ? dayjs(values.endDate).add(1, 'day').format('YYYY-MM-DD') // 캘린더 종료일이 하루 일찍 표시되는 문제 해결
         : formatDate(values.endDate, values.endTime),
       allDay,
     });
@@ -85,7 +85,7 @@ export default function ScheduleForm({
         startDate: dayjs(selectedDate.startDate),
         startTime: dayjs(selectedDate.startDate),
         endDate: selectedDate.allDay
-          ? dayjs(selectedDate.endDate)
+          ? dayjs(selectedDate.endDate).subtract(1, 'day') // 캘린더 종료일이 하루 늦게 표시되는 문제 해결
           : dayjs(selectedDate.endDate),
         endTime: dayjs(selectedDate.endDate),
         allDay,

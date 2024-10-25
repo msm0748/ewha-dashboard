@@ -29,6 +29,7 @@ export default function Calendar({
   updateEvent,
 }: Props) {
   const renderEventContent = (eventInfo: EventContentArg) => {
+    console.log(eventInfo, 'eventInfo');
     return (
       <div className="flex items-center">
         {eventInfo.event.title === '휴가' && (
@@ -55,9 +56,9 @@ export default function Calendar({
     updateEvent(event.id, event.startStr, event.endStr);
   };
 
-  useEffect(() => {
-    console.log('events', events);
-  }, [events]);
+  // useEffect(() => {
+  //   console.log('events', events);
+  // }, [events]);
 
   /** 주어진 시간을 가장 가까운 10분 단위로 변환하는 함수 */
   const roundToNearestTenMinutes = (time: dayjs.Dayjs) => {
@@ -78,10 +79,7 @@ export default function Calendar({
 
     // allDay 일 경우 시간을 현재 시간 + 1시간으로 설정하고 아닌 경우 선택한 시간으로 설정 - allDay로 선택 후 폼에서 allDay 체크 해제 시 현재 시간 + 1시간으로 설정하기 위함
     const endDate = arg.allDay
-      ? `${dayjs(arg.endStr)
-          // fullcalendar에서 endStr은 선택한 날짜의 1일을 더해주기 때문 -1일을 해줌
-          .subtract(1, 'day')
-          .format('YYYY-MM-DD')} ${roundToNearestTenMinutes(
+      ? `${dayjs(arg.endStr).format('YYYY-MM-DD')} ${roundToNearestTenMinutes(
           dayjs().add(1, 'hour')
         ).format('HH:mm')}`
       : dayjs(arg.endStr).format('YYYY-MM-DD HH:mm');
@@ -106,15 +104,7 @@ export default function Calendar({
       initialView="dayGridMonth"
       height="100%"
       locale="ko"
-      events={events.map((event) => ({
-        ...event,
-        // allDay가 true일 경우, end 날짜를 +1 해주는 이유는 fullcalendar에서 end 날짜는 선택한 날짜의 1일을 더해야 그 날짜까지 포함해서 그려주기 때문
-        end: event.allDay
-          ? dayjs(event.end as string)
-              .add(1, 'day')
-              .format('YYYY-MM-DD')
-          : event.end,
-      }))}
+      events={events}
       eventContent={renderEventContent}
       editable={true}
       droppable={true}
