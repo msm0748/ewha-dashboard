@@ -1,6 +1,7 @@
 import { Button, Table, TableColumnsType, TableProps } from 'antd';
 import { UserDataType } from '../types/User';
 import { Dispatch, SetStateAction } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   users: UserDataType[];
@@ -15,11 +16,17 @@ export default function UserTable({
   setSelectedUser,
   openUserFormModal,
 }: Props) {
+  const navigate = useNavigate();
+
   const columns: TableColumnsType<UserDataType> = [
     {
       title: '코드',
       dataIndex: 'code',
-      render: (text: string) => <a className="text-blue-500">{text}</a>,
+      render: (text: string) => (
+        <button className="text-blue-500" onClick={() => navigate(`./${text}`)}>
+          {text}
+        </button>
+      ),
       fixed: 'left',
       width: 120,
     },

@@ -11,7 +11,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 const { Sider, Content } = Layout;
 
 const menuList = [
-  { icon: <UserOutlined />, label: '회원 관리', path: '/admin' },
+  { icon: <UserOutlined />, label: '회원 관리', path: '/admin/users' },
   { icon: <BarChartOutlined />, label: '차트', path: '/admin/chart' },
   { icon: <CalendarOutlined />, label: '일정 관리', path: '/admin/calendar' },
   { icon: <LogoutOutlined />, label: '로그아웃', path: '/admin/logout' },
@@ -34,7 +34,6 @@ export default function AdminPageLayout() {
 
   const siderStyle: React.CSSProperties = {
     overflow: 'auto',
-    // height: '100vh',
     position: 'fixed',
     insetInlineStart: 0,
     top: 0,
