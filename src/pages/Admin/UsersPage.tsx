@@ -16,6 +16,7 @@ export default function UsersPage() {
     setUsersToDelete,
     addUser,
     deleteSelectedUsers,
+    setSelectedUser,
     handleSearch,
   } = useUsers(userDummyData);
 
@@ -60,18 +61,22 @@ export default function UsersPage() {
 
       <UserTable users={users} setUsersToDelete={setUsersToDelete} />
 
-      <AddUserModal
-        open={isAddUserModalOpen}
-        closeModal={closeAddUserModal}
-        addUser={addUser}
-      />
+      {isAddUserModalOpen && (
+        <AddUserModal
+          open={isAddUserModalOpen}
+          closeModal={closeAddUserModal}
+          addUser={addUser}
+        />
+      )}
 
-      <DeleteConfirmModal
-        title="유저 삭제"
-        isOpen={isDeleteUserModalOpen}
-        closeModal={closeDeleteUserModal}
-        onConfirm={deleteSelectedUsers}
-      />
+      {isDeleteUserModalOpen && (
+        <DeleteConfirmModal
+          title="유저 삭제"
+          isOpen={isDeleteUserModalOpen}
+          closeModal={closeDeleteUserModal}
+          onConfirm={deleteSelectedUsers}
+        />
+      )}
     </div>
   );
 }

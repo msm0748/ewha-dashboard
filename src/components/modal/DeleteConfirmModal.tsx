@@ -26,6 +26,7 @@ export default function DeleteConfirmModal({
       cancelText="취소"
       onOk={handleConfirm}
       onCancel={closeModal}
+      transitionName="" // 모달 애니메이션 제거
     >
       <p>유저를 삭제하시겠습니까?</p>
     </Modal>

@@ -17,6 +17,7 @@ export default function AddUserModal({ open, closeModal, addUser }: Props) {
       onCancel={closeModal}
       width={800}
       footer={null} // 모달 버튼 제거
+      transitionName="" // 모달 애니메이션 제거
     >
       <UsersForm addUser={addUser} closeModal={closeModal} />
     </Modal>

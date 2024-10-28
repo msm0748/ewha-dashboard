@@ -29,6 +29,7 @@ export default function ScheduleFormModal({
       centered={true}
       width={640}
       footer={null} // 모달 버튼 제거
+      transitionName="" // 모달 애니메이션 제거
     >
       <div className="pt-6">
         <ScheduleForm
