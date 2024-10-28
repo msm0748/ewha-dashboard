@@ -2,6 +2,7 @@ import type { FormProps } from 'antd';
 import { Button, DatePicker, Form, Input, Select } from 'antd';
 import dayjs from 'dayjs';
 import { UserDataType } from '../../types/User';
+
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -18,31 +19,72 @@ type FieldType = {
 interface Props {
   addUser: (user: UserDataType) => void;
   closeModal: () => void;
+  selectedUser: UserDataType | null;
+  isEditingMode: boolean;
+  updateUser: (user: UserDataType) => void;
 }
 
-export default function UsersForm({ addUser, closeModal }: Props) {
+export default function UsersForm({
+  addUser,
+  closeModal,
+  selectedUser,
+  isEditingMode,
+  updateUser,
+}: Props) {
   const [form] = Form.useForm();
 
   const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
-    addUser({
-      key: Math.random().toString(),
-      code: values.code,
-      birth: dayjs(values.birth).format('YYYY-MM-DD'),
-      gender: values.gender,
-      device: values.device,
-      consentForm: '미제출',
-      survey: '미제출',
-      step1: '',
-      step2: '',
-      step3: '',
-      etc: values.note || '',
-      note: values.note || '',
-      start: values.start ? dayjs(values.start).format('YYYY-MM-DD') : '',
-      end: values.end ? dayjs(values.end).format('YYYY-MM-DD') : '',
-    });
+    if (isEditingMode && selectedUser) {
+      updateUser({
+        key: selectedUser.key,
+        code: values.code,
+        birth: dayjs(values.birth).format('YYYY-MM-DD'),
+        gender: values.gender,
+        device: values.device,
+        consentForm: '미제출',
+        survey: '미제출',
+        step1: '',
+        step2: '',
+        step3: '',
+        etc: values.note || '',
+        note: values.note || '',
+        start: values.start ? dayjs(values.start).format('YYYY-MM-DD') : '',
+        end: values.end ? dayjs(values.end).format('YYYY-MM-DD') : '',
+      });
+    } else {
+      addUser({
+        key: Math.random().toString(),
+        code: values.code,
+        birth: dayjs(values.birth).format('YYYY-MM-DD'),
+        gender: values.gender,
+        device: values.device,
+        consentForm: '미제출',
+        survey: '미제출',
+        step1: '',
+        step2: '',
+        step3: '',
+        etc: values.note || '',
+        note: values.note || '',
+        start: values.start ? dayjs(values.start).format('YYYY-MM-DD') : '',
+        end: values.end ? dayjs(values.end).format('YYYY-MM-DD') : '',
+      });
+    }
     closeModal();
     form.resetFields();
   };
+
+  const initialValues =
+    isEditingMode && selectedUser
+      ? {
+          code: selectedUser.code,
+          birth: dayjs(selectedUser.birth),
+          gender: selectedUser.gender,
+          device: selectedUser.device,
+          note: selectedUser.note,
+          start: selectedUser.start ? dayjs(selectedUser.start) : undefined,
+          end: selectedUser.end ? dayjs(selectedUser.end) : undefined,
+        }
+      : undefined;
 
   return (
     <Form
@@ -55,6 +97,7 @@ export default function UsersForm({ addUser, closeModal }: Props) {
       //   onFinishFailed={onFinishFailed}
       layout="vertical"
       autoComplete="off"
+      initialValues={initialValues}
     >
       <Form.Item<FieldType>
         label="코드"

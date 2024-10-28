@@ -22,6 +22,11 @@ export const useUsers = (initialData: UserDataType[]) => {
     setUsers([...users, user]);
   };
 
+  /** 사용자 정보 수정 */
+  const updateUser = (user: UserDataType) => {
+    setUsers(users.map((u) => (u.key === user.key ? user : u)));
+  };
+
   /** 선택된 사용자 삭제 함수 */
   const deleteSelectedUsers = () => {
     setUsers(users.filter((user) => !usersToDelete.includes(user.key)));
@@ -36,6 +41,7 @@ export const useUsers = (initialData: UserDataType[]) => {
   return {
     users: filteredUsers,
     selectedUser,
+    updateUser,
     setSelectedUser,
     usersToDelete,
     setUsersToDelete,

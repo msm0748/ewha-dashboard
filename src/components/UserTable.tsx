@@ -5,120 +5,126 @@ import { Dispatch, SetStateAction } from 'react';
 interface Props {
   users: UserDataType[];
   setUsersToDelete: Dispatch<SetStateAction<React.Key[]>>;
+  setSelectedUser: Dispatch<SetStateAction<UserDataType | null>>;
+  openUserFormModal: () => void;
 }
 
-const columns: TableColumnsType<UserDataType> = [
-  {
-    title: '코드',
-    dataIndex: 'code',
-    render: (text: string) => <a className="text-blue-500">{text}</a>,
-    fixed: 'left',
-    width: 120,
-  },
-  {
-    title: '생년월일',
-    dataIndex: 'birth',
-    fixed: 'left',
-    width: 130,
-  },
-  {
-    title: '성별',
-    dataIndex: 'gender',
-    fixed: 'left',
-    width: 60,
-  },
-  {
-    title: '기기',
-    dataIndex: 'device',
-    fixed: 'left',
-    width: 100,
-  },
-  {
-    title: '동의서',
-    dataIndex: 'consentForm',
-    fixed: 'left',
-    filters: [
-      {
-        text: '제출',
-        value: '제출',
-      },
-      {
-        text: '미제출',
-        value: '미제출',
-      },
-    ],
-    width: 100,
-    onFilter: (value, record) =>
-      record.consentForm.indexOf(value as string) === 0,
-  },
-  {
-    title: '설문',
-    dataIndex: 'survey',
-    filters: [
-      {
-        text: '제출',
-        value: '제출',
-      },
-      {
-        text: '미제출',
-        value: '미제출',
-      },
-    ],
-    onFilter: (value, record) => record.survey.indexOf(value as string) === 0,
-    width: 100,
-  },
-  {
-    title: '생체신호',
-    dataIndex: 'step1',
-  },
-  {
-    title: '신체계측',
-    dataIndex: 'step2',
-  },
-  {
-    title: '약물복용력',
-    dataIndex: 'step3',
-  },
-  {
-    title: '기타',
-    dataIndex: 'etc',
-  },
-  {
-    title: '비고',
-    dataIndex: 'note',
-  },
-  {
-    title: 'Start',
-    dataIndex: 'start',
-  },
-  {
-    title: 'End',
-    dataIndex: 'end',
-  },
-  {
-    title: '관리',
-    dataIndex: 'action',
-    fixed: 'right',
-    width: 100,
-    render: (_, record: UserDataType) => (
-      <Button
-        size="small"
-        className="text-red-500"
-        onClick={() => handleEdit(record)} // 수정 핸들러 호출
-      >
-        수정
-      </Button>
-    ),
-  },
-];
+export default function UserTable({
+  users,
+  setUsersToDelete,
+  setSelectedUser,
+  openUserFormModal,
+}: Props) {
+  const columns: TableColumnsType<UserDataType> = [
+    {
+      title: '코드',
+      dataIndex: 'code',
+      render: (text: string) => <a className="text-blue-500">{text}</a>,
+      fixed: 'left',
+      width: 120,
+    },
+    {
+      title: '생년월일',
+      dataIndex: 'birth',
+      fixed: 'left',
+      width: 130,
+    },
+    {
+      title: '성별',
+      dataIndex: 'gender',
+      fixed: 'left',
+      width: 60,
+    },
+    {
+      title: '기기',
+      dataIndex: 'device',
+      fixed: 'left',
+      width: 100,
+    },
+    {
+      title: '동의서',
+      dataIndex: 'consentForm',
+      fixed: 'left',
+      filters: [
+        {
+          text: '제출',
+          value: '제출',
+        },
+        {
+          text: '미제출',
+          value: '미제출',
+        },
+      ],
+      width: 100,
+      onFilter: (value, record) =>
+        record.consentForm.indexOf(value as string) === 0,
+    },
+    {
+      title: '설문',
+      dataIndex: 'survey',
+      filters: [
+        {
+          text: '제출',
+          value: '제출',
+        },
+        {
+          text: '미제출',
+          value: '미제출',
+        },
+      ],
+      onFilter: (value, record) => record.survey.indexOf(value as string) === 0,
+      width: 100,
+    },
+    {
+      title: '생체신호',
+      dataIndex: 'step1',
+    },
+    {
+      title: '신체계측',
+      dataIndex: 'step2',
+    },
+    {
+      title: '약물복용력',
+      dataIndex: 'step3',
+    },
+    {
+      title: '기타',
+      dataIndex: 'etc',
+    },
+    {
+      title: '비고',
+      dataIndex: 'note',
+    },
+    {
+      title: 'Start',
+      dataIndex: 'start',
+    },
+    {
+      title: 'End',
+      dataIndex: 'end',
+    },
+    {
+      title: '관리',
+      dataIndex: 'action',
+      fixed: 'right',
+      width: 100,
+      render: (_, record: UserDataType) => (
+        <Button
+          size="small"
+          className="text-red-500"
+          onClick={() => handleEditButtonClick(record)} // 수정 핸들러 호출
+        >
+          수정
+        </Button>
+      ),
+    },
+  ];
 
-// 수정 핸들러 함수 정의
-const handleEdit = (record: UserDataType) => {
-  console.log('수정할 사용자 데이터:', record);
-  // 여기에 수정 처리 로직을 추가할 수 있습니다.
-};
+  const handleEditButtonClick = (record: UserDataType) => {
+    setSelectedUser(record);
+    openUserFormModal();
+  };
 
-export default function UserTable({ users, setUsersToDelete }: Props) {
   const rowSelection: TableProps<UserDataType>['rowSelection'] = {
     onChange: (selectedRowKeys: React.Key[]) => {
       setUsersToDelete(selectedRowKeys);

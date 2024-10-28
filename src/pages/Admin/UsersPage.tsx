@@ -1,6 +1,6 @@
 import { Button } from 'antd';
 import { Input } from 'antd';
-import AddUserModal from '../../components/modal/AddUserModal';
+import UserFormModal from '../../components/modal/UserFormModal';
 import { useUsers } from '../../hooks/useUsers';
 import { userDummyData } from '../../data/dumy/userDummyData';
 import { useModal } from '../../hooks/useModal';
@@ -13,6 +13,8 @@ export default function UsersPage() {
     users,
     usersToDelete,
     searchKeyword,
+    selectedUser,
+    updateUser,
     setUsersToDelete,
     addUser,
     deleteSelectedUsers,
@@ -21,9 +23,9 @@ export default function UsersPage() {
   } = useUsers(userDummyData);
 
   const {
-    isOpen: isAddUserModalOpen,
-    openModal: openAddUserModal,
-    closeModal: closeAddUserModal,
+    isOpen: isUserFormModalOpen,
+    openModal: openUserFormModal,
+    closeModal: closeUserFormModal,
   } = useModal();
 
   const {
@@ -46,7 +48,7 @@ export default function UsersPage() {
           />
         </div>
         <div className="flex gap-4">
-          <Button type="primary" onClick={openAddUserModal}>
+          <Button type="primary" onClick={openUserFormModal}>
             회원 등록
           </Button>
           <Button
@@ -59,13 +61,21 @@ export default function UsersPage() {
         </div>
       </div>
 
-      <UserTable users={users} setUsersToDelete={setUsersToDelete} />
+      <UserTable
+        users={users}
+        setUsersToDelete={setUsersToDelete}
+        setSelectedUser={setSelectedUser}
+        openUserFormModal={openUserFormModal}
+      />
 
-      {isAddUserModalOpen && (
-        <AddUserModal
-          open={isAddUserModalOpen}
-          closeModal={closeAddUserModal}
+      {isUserFormModalOpen && (
+        <UserFormModal
+          open={isUserFormModalOpen}
+          closeModal={closeUserFormModal}
           addUser={addUser}
+          selectedUser={selectedUser}
+          setSelectedUser={setSelectedUser}
+          updateUser={updateUser}
         />
       )}
 
