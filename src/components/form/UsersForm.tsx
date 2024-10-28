@@ -11,6 +11,7 @@ type FieldType = {
   device: string;
   birth: string;
   gender: 'M' | 'F';
+  etc?: string;
   note?: string;
   start?: string;
   end?: string;
@@ -43,10 +44,10 @@ export default function UsersForm({
         device: values.device,
         consentForm: '미제출',
         survey: '미제출',
-        step1: '',
-        step2: '',
-        step3: '',
-        etc: values.note || '',
+        step1: selectedUser.step1,
+        step2: selectedUser.step2,
+        step3: selectedUser.step3,
+        etc: values.etc || '',
         note: values.note || '',
         start: values.start ? dayjs(values.start).format('YYYY-MM-DD') : '',
         end: values.end ? dayjs(values.end).format('YYYY-MM-DD') : '',
@@ -63,7 +64,7 @@ export default function UsersForm({
         step1: '',
         step2: '',
         step3: '',
-        etc: values.note || '',
+        etc: values.etc || '',
         note: values.note || '',
         start: values.start ? dayjs(values.start).format('YYYY-MM-DD') : '',
         end: values.end ? dayjs(values.end).format('YYYY-MM-DD') : '',
@@ -130,6 +131,10 @@ export default function UsersForm({
         name="device"
         rules={[{ required: true, message: 'Please input your username!' }]}
       >
+        <Input />
+      </Form.Item>
+
+      <Form.Item label="기타" name="etc">
         <Input />
       </Form.Item>
 

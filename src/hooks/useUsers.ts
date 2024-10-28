@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 import type { UserDataType } from '../types/User';
+import useUsersStore from '../store/userStore';
 
-export const useUsers = (initialData: UserDataType[]) => {
-  const [users, setUsers] = useState<UserDataType[]>(initialData);
+export const useUsers = () => {
+  const { users, addUser, updateUser, deleteUser } = useUsersStore();
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   // 삭제할 사용자들의 key를 저장하는 상태
   const [usersToDelete, setUsersToDelete] = useState<React.Key[]>([]);
@@ -17,19 +18,9 @@ export const useUsers = (initialData: UserDataType[]) => {
     );
   }, [users, searchKeyword]);
 
-  /** 사용자 추가 함수 */
-  const addUser = (user: UserDataType) => {
-    setUsers([...users, user]);
-  };
-
-  /** 사용자 정보 수정 */
-  const updateUser = (user: UserDataType) => {
-    setUsers(users.map((u) => (u.key === user.key ? user : u)));
-  };
-
   /** 선택된 사용자 삭제 함수 */
   const deleteSelectedUsers = () => {
-    setUsers(users.filter((user) => !usersToDelete.includes(user.key)));
+    deleteUser(usersToDelete);
     setUsersToDelete([]); // 삭제 후 선택 초기화
   };
 
