@@ -1,7 +1,7 @@
 import { Modal } from 'antd';
 import { UserDataType } from '../../types/User';
 import UsersForm from '../form/UsersForm';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 
 interface Props {
   open: boolean;
