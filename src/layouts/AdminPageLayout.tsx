@@ -3,10 +3,14 @@ import {
   UserOutlined,
   BarChartOutlined,
   LogoutOutlined,
+  MenuUnfoldOutlined,
+  MenuFoldOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu, theme } from 'antd';
+import { Button, Layout, Menu, theme } from 'antd';
+import { Header } from 'antd/es/layout/layout';
 import { useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useLayoutStore } from '../store/useLayoutStore';
 
 const { Sider, Content } = Layout;
 
@@ -21,6 +25,11 @@ export default function AdminPageLayout() {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
+  const title = useLayoutStore((state) => state.title);
+
+  const [collapsed, setCollapsed] = useState(false);
+
   const location = useLocation();
 
   const [selectedKey, setSelectedKey] = useState(location.pathname);
@@ -45,10 +54,15 @@ export default function AdminPageLayout() {
   return (
     <div className="min-h-dvh flex">
       <Layout hasSider>
-        <Sider trigger={null} collapsible style={siderStyle}>
-          <div className="p-4 font-bold text-xl text-white">
-            로고 or 노인 취약
-          </div>
+        <Sider
+          trigger={null}
+          collapsible
+          collapsed={collapsed}
+          style={siderStyle}
+        >
+          {!collapsed && (
+            <div className="p-4 font-bold text-xl text-white">로고</div>
+          )}
           <Menu
             theme="dark"
             mode="inline"
@@ -63,11 +77,22 @@ export default function AdminPageLayout() {
             })}
           />
         </Sider>
-        <Layout style={{ marginInlineStart: 200 }}>
+        <Layout style={{ marginInlineStart: collapsed ? 80 : 200 }}>
+          <Header style={{ padding: 0, background: colorBgContainer }}>
+            <div className="flex items-center">
+              <Button
+                type="text"
+                icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                onClick={() => setCollapsed(!collapsed)}
+                style={{ fontSize: '16px', width: 64, height: 64 }}
+              />
+              <h1 className="text-xl font-semibold">{title}</h1>
+            </div>
+          </Header>
           <Content
             style={{
               margin: '24px 16px',
-              padding: 24,
+              padding: 48,
               background: colorBgContainer,
               borderRadius: borderRadiusLG,
             }}

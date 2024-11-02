@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
  * data type
  * https://fullcalendar.io/docs/event-object
  */
-export const eventDumyData: EventInput[] = [
+export const eventDummyData: EventInput[] = [
   {
     id: uuidv4(),
     title: '회의',

@@ -1,14 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Calendar from '../../components/Calendar';
 import ScheduleFormModal from '../../components/modal/ScheduleFormModal';
 import { EventInput } from '@fullcalendar/core/index.js';
-import { eventDumyData } from '../../data/dumy/eventsDumyData';
+import { eventDummyData } from '../../data/dumy/eventsDummyData';
 import { SelectedDate, UpdateEventArg } from '../../types/Calendar';
 import dayjs from 'dayjs';
 import { useModal } from '../../hooks/useModal';
+import { usePageTitle } from '../../hooks/usePageTitle';
 
 export default function CalendarPage() {
-  const [events, setEvents] = useState<EventInput[]>(eventDumyData);
+  usePageTitle('일정 관리');
+
+  const [events, setEvents] = useState<EventInput[]>(eventDummyData);
   const [selectedEvent, setSelectedEvent] = useState<EventInput | null>(null);
   const [selectedDate, setSelectedDate] = useState<SelectedDate>({
     startDate: dayjs().format('YYYY-MM-DD'),
@@ -52,10 +55,6 @@ export default function CalendarPage() {
     closeModal();
     setSelectedEvent(null);
   };
-
-  useEffect(() => {
-    console.log(events, 'events');
-  }, [events]);
 
   return (
     <div className="h-full">

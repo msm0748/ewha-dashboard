@@ -2,13 +2,15 @@ import { Button } from 'antd';
 import { Input } from 'antd';
 import UserFormModal from '../../components/modal/UserFormModal';
 import { useUsers } from '../../hooks/useUsers';
-import { userDummyData } from '../../data/dumy/userDummyData';
 import { useModal } from '../../hooks/useModal';
 import DeleteConfirmModal from '../../components/modal/DeleteConfirmModal';
 import UserTable from '../../components/UserTable';
+import { usePageTitle } from '../../hooks/usePageTitle';
 const { Search } = Input;
 
 export default function UsersPage() {
+  usePageTitle('회원 관리');
+
   const {
     users,
     usersToDelete,
@@ -20,7 +22,7 @@ export default function UsersPage() {
     deleteSelectedUsers,
     setSelectedUser,
     handleSearch,
-  } = useUsers(userDummyData);
+  } = useUsers();
 
   const {
     isOpen: isUserFormModalOpen,

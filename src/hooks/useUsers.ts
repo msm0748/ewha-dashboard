@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { UserDataType } from '../types/User';
-import useUsersStore from '../store/userStore';
+import useUsersStore from '../store/useUsersStore';
 
 export const useUsers = () => {
   const { users, addUser, updateUser, deleteUser } = useUsersStore();
