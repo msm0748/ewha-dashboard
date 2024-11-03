@@ -125,79 +125,81 @@ export default function UsersForm({
   }, [isEditingMode, selectedUser]);
 
   return (
-    <Form
-      form={form}
-      name="basic"
-      labelCol={{ span: 16 }}
-      wrapperCol={{ span: 16 }}
-      style={{ width: '100%' }}
-      onFinish={onFinish}
-      //   onFinishFailed={onFinishFailed}
-      layout="vertical"
-      autoComplete="off"
-      initialValues={initialValues}
-    >
-      <Form.Item<FieldType>
-        label="코드"
-        name="code"
-        rules={[{ required: true, message: 'Please input your username!' }]}
+    <div className="h-[600px] bg-white overflow-y-auto">
+      <Form
+        form={form}
+        name="basic"
+        labelCol={{ span: 16 }}
+        wrapperCol={{ span: 16 }}
+        style={{ width: '100%' }}
+        onFinish={onFinish}
+        //   onFinishFailed={onFinishFailed}
+        layout="vertical"
+        autoComplete="off"
+        initialValues={initialValues}
       >
-        <Input />
-      </Form.Item>
-
-      <Form.Item<FieldType>
-        name="birth"
-        label="생년월일"
-        rules={[{ required: true }]}
-      >
-        <DatePicker />
-      </Form.Item>
-
-      <Form.Item name="gender" label="성별" rules={[{ required: true }]}>
-        <Select
-          placeholder="Select a option and change input text above"
-          allowClear
+        <Form.Item<FieldType>
+          label="코드"
+          name="code"
+          rules={[{ required: true, message: 'Please input your username!' }]}
         >
-          <Option value="M">남자</Option>
-          <Option value="F">여자</Option>
-        </Select>
-      </Form.Item>
+          <Input />
+        </Form.Item>
 
-      <Form.Item<FieldType>
-        label="기기"
-        name="device"
-        rules={[{ required: true, message: 'Please input your username!' }]}
-      >
-        <Input />
-      </Form.Item>
+        <Form.Item<FieldType>
+          name="birth"
+          label="생년월일"
+          rules={[{ required: true }]}
+        >
+          <DatePicker />
+        </Form.Item>
 
-      <Form.Item label="동의서" name="consentForm">
-        <Upload {...uploadProps} fileList={fileList}>
-          <Button icon={<UploadOutlined />}>Upload</Button>
-        </Upload>
-      </Form.Item>
+        <Form.Item name="gender" label="성별" rules={[{ required: true }]}>
+          <Select
+            placeholder="Select a option and change input text above"
+            allowClear
+          >
+            <Option value="M">남자</Option>
+            <Option value="F">여자</Option>
+          </Select>
+        </Form.Item>
 
-      <Form.Item label="기타" name="etc">
-        <Input />
-      </Form.Item>
+        <Form.Item<FieldType>
+          label="기기"
+          name="device"
+          rules={[{ required: true, message: 'Please input your username!' }]}
+        >
+          <Input />
+        </Form.Item>
 
-      <Form.Item label="비고" name="note">
-        <TextArea rows={4} />
-      </Form.Item>
+        <Form.Item label="동의서" name="consentForm">
+          <Upload {...uploadProps} fileList={fileList}>
+            <Button icon={<UploadOutlined />}>Upload</Button>
+          </Upload>
+        </Form.Item>
 
-      <Form.Item name="start" label="시작 날짜">
-        <DatePicker />
-      </Form.Item>
+        <Form.Item label="기타" name="etc">
+          <Input />
+        </Form.Item>
 
-      <Form.Item name="end" label="종료 날짜">
-        <DatePicker />
-      </Form.Item>
+        <Form.Item label="비고" name="note">
+          <TextArea rows={4} />
+        </Form.Item>
 
-      <div className="flex justify-end gap-5">
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-      </div>
-    </Form>
+        <Form.Item name="start" label="시작 날짜">
+          <DatePicker />
+        </Form.Item>
+
+        <Form.Item name="end" label="종료 날짜">
+          <DatePicker />
+        </Form.Item>
+
+        <div className="flex justify-end gap-5">
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </div>
+      </Form>
+    </div>
   );
 }
