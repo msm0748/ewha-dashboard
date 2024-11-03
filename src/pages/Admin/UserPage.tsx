@@ -71,18 +71,22 @@ export default function UserPage() {
                 </th>
                 <td className="py-2.5 px-6 border-l border-[#7c8091] text-base border-t">
                   <ul>
-                    {user?.consentForm.map((form) => (
-                      <li key={form.uid}>
-                        <a
-                          href={form.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-blue-500"
-                        >
-                          {form.name}
-                        </a>
-                      </li>
-                    ))}
+                    {user?.consentForm && user?.consentForm.length > 0 ? (
+                      user?.consentForm.map((form) => (
+                        <li key={form.uid}>
+                          <a
+                            href={form.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-blue-500"
+                          >
+                            {form.name}
+                          </a>
+                        </li>
+                      ))
+                    ) : (
+                      <li>미제출</li>
+                    )}
                   </ul>
                 </td>
               </tr>
