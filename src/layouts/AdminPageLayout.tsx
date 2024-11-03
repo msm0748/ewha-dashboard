@@ -1,7 +1,7 @@
 import {
   CalendarOutlined,
   UserOutlined,
-  BarChartOutlined,
+  // BarChartOutlined,
   LogoutOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,

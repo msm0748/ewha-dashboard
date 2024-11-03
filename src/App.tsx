@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import UsersPage from './pages/Admin/UsersPage';
 import AdminPageLayout from './layouts/AdminPageLayout';
-import ChartPage from './pages/Admin/ChartPage';
+// import ChartPage from './pages/Admin/ChartPage';
 import CalendarPage from './pages/Admin/CalendarPage';
 import HomPage from './pages/HomePage';
 import AdminPage from './pages/Admin';
