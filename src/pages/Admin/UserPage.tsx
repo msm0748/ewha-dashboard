@@ -70,7 +70,20 @@ export default function UserPage() {
                   동의서
                 </th>
                 <td className="py-2.5 px-6 border-l border-[#7c8091] text-base border-t">
-                  {user?.consentForm}
+                  <ul>
+                    {user?.consentForm.map((form) => (
+                      <li key={form.uid}>
+                        <a
+                          href={form.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-blue-500"
+                        >
+                          {form.name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
                 </td>
               </tr>
               <tr>

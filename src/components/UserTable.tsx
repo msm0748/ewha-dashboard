@@ -1,4 +1,4 @@
-import { Button, Table, TableColumnsType, TableProps } from 'antd';
+import { Button, Table, TableColumnsType, TableProps, UploadFile } from 'antd';
 import { UserDataType } from '../types/User';
 import { Dispatch, SetStateAction } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -63,8 +63,13 @@ export default function UserTable({
         },
       ],
       width: 100,
-      onFilter: (value, record) =>
-        record.consentForm.indexOf(value as string) === 0,
+      onFilter: (value, record) => {
+        // 제출 여부에 따른 필터링
+        const isSubmitted = record.consentForm && record.consentForm.length > 0;
+        return value === '제출' ? isSubmitted : !isSubmitted;
+      },
+      render: (fileList: UploadFile[]) =>
+        fileList && fileList.length > 0 ? '제출' : '미제출',
     },
     {
       title: '설문',

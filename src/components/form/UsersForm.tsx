@@ -1,7 +1,9 @@
-import type { FormProps } from 'antd';
-import { Button, DatePicker, Form, Input, Select } from 'antd';
+import type { FormProps, UploadFile, UploadProps } from 'antd';
+import { Button, DatePicker, Form, Input, Select, Upload } from 'antd';
 import dayjs from 'dayjs';
 import { UserDataType } from '../../types/User';
+import { useEffect, useState } from 'react';
+import { UploadOutlined } from '@ant-design/icons';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -9,6 +11,7 @@ const { Option } = Select;
 type FieldType = {
   code: string;
   device: string;
+  consentForm: UploadFile[];
   birth: string;
   gender: 'M' | 'F';
   etc?: string;
@@ -34,6 +37,33 @@ export default function UsersForm({
 }: Props) {
   const [form] = Form.useForm();
 
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+  const handleUploadChange: UploadProps['onChange'] = (info) => {
+    let newFileList = [...info.fileList];
+
+    // 1. Limit the number of uploaded files
+    // Only to show two recent uploaded files, and old ones will be replaced by the new
+    newFileList = newFileList.slice(-2);
+
+    // 2. Read from response and show file link
+    newFileList = newFileList.map((file) => {
+      if (file.response) {
+        // Component will show file.url as link
+        file.url = file.response.url;
+      }
+      return file;
+    });
+
+    setFileList(newFileList);
+  };
+
+  const uploadProps = {
+    action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
+    onChange: handleUploadChange,
+    multiple: true,
+  };
+
   const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
     if (isEditingMode && selectedUser) {
       updateUser({
@@ -42,7 +72,7 @@ export default function UsersForm({
         birth: dayjs(values.birth).format('YYYY-MM-DD'),
         gender: values.gender,
         device: values.device,
-        consentForm: '미제출',
+        consentForm: fileList,
         survey: '미제출',
         step1: selectedUser.step1,
         step2: selectedUser.step2,
@@ -59,7 +89,7 @@ export default function UsersForm({
         birth: dayjs(values.birth).format('YYYY-MM-DD'),
         gender: values.gender,
         device: values.device,
-        consentForm: '미제출',
+        consentForm: fileList,
         survey: '미제출',
         step1: '',
         step2: '',
@@ -81,11 +111,18 @@ export default function UsersForm({
           birth: dayjs(selectedUser.birth),
           gender: selectedUser.gender,
           device: selectedUser.device,
+          consentForm: selectedUser.consentForm,
           note: selectedUser.note,
           start: selectedUser.start ? dayjs(selectedUser.start) : undefined,
           end: selectedUser.end ? dayjs(selectedUser.end) : undefined,
         }
       : undefined;
+
+  useEffect(() => {
+    if (isEditingMode && selectedUser?.consentForm) {
+      setFileList(selectedUser.consentForm);
+    }
+  }, [isEditingMode, selectedUser]);
 
   return (
     <Form
@@ -132,6 +169,12 @@ export default function UsersForm({
         rules={[{ required: true, message: 'Please input your username!' }]}
       >
         <Input />
+      </Form.Item>
+
+      <Form.Item label="동의서" name="consentForm">
+        <Upload {...uploadProps} fileList={fileList}>
+          <Button icon={<UploadOutlined />}>Upload</Button>
+        </Upload>
       </Form.Item>
 
       <Form.Item label="기타" name="etc">
