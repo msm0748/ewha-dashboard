@@ -7,8 +7,8 @@ import {
 export default function BarChart() {
   const data: PlotParams['data'] = [
     {
-      x: ['수연', '우연', '가연', '나연', '다연'],
-      y: [100, 112, 225, 126, 175],
+      x: ['2024-10-01', '2024-10-02', '2024-10-03', '2024-10-04', '2024-10-05'],
+      y: [231, 149, 211, 187, 189],
       name: '밤 중 수면 시간',
       type: 'bar',
       marker: { color: '#7cda38' },
@@ -18,6 +18,10 @@ export default function BarChart() {
   const layout: PlotParams['layout'] = {
     title: '데이터 생성 건수',
     ...PLOTLY_DEFAULT_LAYOUT,
+    xaxis: {
+      tickformat: '%Y-%m-%d', // 날짜만 표시되도록 설정
+      dtick: 'D1', // 하루 단위로 간격 고정
+    },
     // width: 800,
     // height: 400,
   };
