@@ -17,7 +17,7 @@ const App = () => {
           <Route index element={<UsersPage />} />
           <Route path=":userId" element={<UserPage />} />
         </Route>
-        <Route path="chart" element={<ChartPage />} />
+        {/* <Route path="chart" element={<ChartPage />} /> */}
         <Route path="calendar" element={<CalendarPage />} />
       </Route>
     </Routes>

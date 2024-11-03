@@ -16,7 +16,7 @@ const { Sider, Content } = Layout;
 
 const menuList = [
   { icon: <UserOutlined />, label: '회원 관리', path: '/admin/users' },
-  { icon: <BarChartOutlined />, label: '차트', path: '/admin/chart' },
+  // { icon: <BarChartOutlined />, label: '차트', path: '/admin/chart' },
   { icon: <CalendarOutlined />, label: '일정 관리', path: '/admin/calendar' },
   { icon: <LogoutOutlined />, label: '로그아웃', path: '/admin/logout' },
 ];
